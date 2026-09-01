@@ -1,0 +1,18 @@
+{
+  "asOf": "2026-08-29T00:00:00.000Z",
+  "source": "Local reference snapshot",
+  "prices": {
+    "AAPL": 326.35,
+    "AMZN": 254.66,
+    "AVGO": 370.45,
+    "COIN": 177.3,
+    "GOOGL": 338.05,
+    "HOOD": 103.54,
+    "META": 580.8,
+    "MSFT": 504.2,
+    "MSTR": 123.82,
+    "NVDA": 217.72,
+    "PLTR": 180.64,
+    "TSLA": 355.74
+  }
+}
