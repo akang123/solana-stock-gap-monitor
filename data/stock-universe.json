@@ -1,0 +1,74 @@
+[
+  {
+    "ticker": "AAPL",
+    "tokenSymbol": "AAPLx",
+    "company": "Apple",
+    "discoveryQuery": "AAPLx"
+  },
+  {
+    "ticker": "AMZN",
+    "tokenSymbol": "AMZNx",
+    "company": "Amazon",
+    "discoveryQuery": "AMZNx"
+  },
+  {
+    "ticker": "AVGO",
+    "tokenSymbol": "AVGOx",
+    "company": "Broadcom",
+    "discoveryQuery": "AVGOx"
+  },
+  {
+    "ticker": "COIN",
+    "tokenSymbol": "COINx",
+    "company": "Coinbase",
+    "discoveryQuery": "COINx"
+  },
+  {
+    "ticker": "GOOGL",
+    "tokenSymbol": "GOOGLx",
+    "company": "Alphabet",
+    "discoveryQuery": "GOOGLx"
+  },
+  {
+    "ticker": "HOOD",
+    "tokenSymbol": "HOODx",
+    "company": "Robinhood",
+    "discoveryQuery": "HOODx"
+  },
+  {
+    "ticker": "META",
+    "tokenSymbol": "METAx",
+    "company": "Meta",
+    "discoveryQuery": "METAx"
+  },
+  {
+    "ticker": "MSFT",
+    "tokenSymbol": "MSFTx",
+    "company": "Microsoft",
+    "discoveryQuery": "MSFTx"
+  },
+  {
+    "ticker": "MSTR",
+    "tokenSymbol": "MSTR",
+    "company": "Strategy",
+    "discoveryQuery": "MSTR"
+  },
+  {
+    "ticker": "NVDA",
+    "tokenSymbol": "NVDAx",
+    "company": "NVIDIA",
+    "discoveryQuery": "NVDAx"
+  },
+  {
+    "ticker": "PLTR",
+    "tokenSymbol": "PLTRx",
+    "company": "Palantir",
+    "discoveryQuery": "PLTRx"
+  },
+  {
+    "ticker": "TSLA",
+    "tokenSymbol": "TSLAx",
+    "company": "Tesla",
+    "discoveryQuery": "TSLAx"
+  }
+]
