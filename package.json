@@ -1,0 +1,15 @@
+{
+  "name": "merkle-solana-stock-gap-monitor",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "refresh": "node scripts/refresh-data.mjs",
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/health-check.mjs",
+    "verify": "npm run refresh && npm run build && npm run check"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
