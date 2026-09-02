@@ -17,6 +17,10 @@ const elements = {
 
 const numberFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
 
+const logoSymbols = Object.freeze({
+  STRC: "MSTR",
+});
+
 function setText(selector, value) {
   const element = document.querySelector(selector);
   if (element) element.textContent = value;
@@ -66,6 +70,24 @@ function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[character]));
 }
 
+function getLogoUrl(market) {
+  const symbol = logoSymbols[market.ticker] || market.marketSymbol || market.ticker;
+  return `https://financialmodelingprep.com/image-stock/${encodeURIComponent(symbol)}.png`;
+}
+
+function getAssetFallback(market) {
+  return (market.ticker || market.company || "?").slice(0, 2).toUpperCase();
+}
+
+function wireLogoFallbacks() {
+  elements.rows?.querySelectorAll(".asset-logo").forEach((image) => {
+    image.addEventListener("error", () => {
+      image.hidden = true;
+      image.nextElementSibling?.removeAttribute("hidden");
+    }, { once: true });
+  });
+}
+
 function renderAlerts() {
   if (elements.alerts) elements.alerts.innerHTML = "";
 }
@@ -106,8 +128,9 @@ function renderRows() {
   elements.rows.innerHTML = filtered.map((market) => {
     const gapClass = market.gapPct >= 0 ? "is-positive" : "is-negative";
     const sourceHref = market.pairUrl || "https://dexscreener.com/solana";
+    const logoUrl = getLogoUrl(market);
     return `<tr>
-      <td><div class="asset-cell"><span class="asset-mark" aria-hidden="true">${escapeHtml(market.ticker.slice(0, 2))}</span><span class="asset-name"><strong>${escapeHtml(market.ticker)} <span class="token-pill">${escapeHtml(market.tokenSymbol)}</span></strong><span>${escapeHtml(market.company)}</span></span></div></td>
+      <td><div class="asset-cell"><span class="asset-mark"><img class="asset-logo" src="${escapeHtml(logoUrl)}" alt="" width="28" height="28" loading="lazy" decoding="async" referrerpolicy="no-referrer" /><span class="asset-fallback" aria-hidden="true" hidden>${escapeHtml(getAssetFallback(market))}</span></span><span class="asset-name"><strong>${escapeHtml(market.ticker)} <span class="token-pill">${escapeHtml(market.tokenSymbol)}</span></strong><span>${escapeHtml(market.company)}</span></span></div></td>
       <td><div class="gap-cell"><span class="gap-value ${gapClass}">${formatGap(market.gapPct)}</span><span class="sub-value">market spread</span></div></td>
       <td><div class="price-cell"><a class="source-link price-main" href="${escapeHtml(sourceHref)}" target="_blank" rel="noreferrer">${formatPrice(market.onchainPrice)} ↗</a><span class="sub-value">${escapeHtml(market.dexId || "Solana DEX")}</span></div></td>
       <td><div class="price-cell"><a class="source-link price-main" href="${escapeHtml(market.marketPriceUrl || `https://finance.yahoo.com/quote/${encodeURIComponent(market.marketSymbol || market.ticker)}`)}" target="_blank" rel="noreferrer">${formatPrice(market.marketPrice)} ↗</a><span class="sub-value">${escapeHtml(market.marketPriceSource || "Market feed")} · ${formatAge(market.marketPriceAsOf)}</span></div></td>
@@ -115,6 +138,7 @@ function renderRows() {
       <td><div class="price-cell"><span class="price-main mono">${formatCompact(market.volume24hUsd)}</span><span class="sub-value">${formatGap(market.priceChange24hPct)} 24h</span></div></td>
     </tr>`;
   }).join("");
+  wireLogoFallbacks();
 }
 
 function render(data) {
