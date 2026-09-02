@@ -66,11 +66,8 @@ function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[character]));
 }
 
-function renderAlerts(data) {
-  const warnings = [...(data?.warnings ?? []), ...(data?.errors ?? []).map((error) => error.message)];
-  const visibleWarnings = warnings.slice(0, 5);
-  if (warnings.length > visibleWarnings.length) visibleWarnings.push(`${warnings.length - visibleWarnings.length} additional refresh notes are available in the latest snapshot.`);
-  if (elements.alerts) elements.alerts.innerHTML = visibleWarnings.map((warning) => `<div class="alert"><span class="alert-mark" aria-hidden="true">!</span><span>${escapeHtml(warning)}</span></div>`).join("");
+function renderAlerts() {
+  if (elements.alerts) elements.alerts.innerHTML = "";
 }
 
 function renderSummary(data, markets) {
@@ -122,7 +119,7 @@ function renderRows() {
 
 function render(data) {
   state.data = data;
-  renderAlerts(data);
+  renderAlerts();
   const markets = data?.markets ?? [];
   renderSummary(data, markets);
   renderRows();
