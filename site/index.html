@@ -120,26 +120,15 @@
           </div>
         </section>
 
-        <section class="status-section" id="methodology" aria-labelledby="status-title">
+        <section class="status-section" id="methodology" aria-label="Data plane">
           <div class="section-heading">
             <p class="eyebrow">DATA PLANE</p>
-            <h2 id="status-title">A monitor that tells you what it knows.</h2>
           </div>
-          <div class="status-grid">
+          <div class="status-grid" style="grid-template-columns: 1fr;">
             <article class="status-block">
               <span class="status-index">01</span>
               <h3>Source coverage</h3>
               <p id="coverage-copy">Waiting for the latest snapshot.</p>
-            </article>
-            <article class="status-block">
-              <span class="status-index">02</span>
-              <h3>Refresh cadence</h3>
-              <p>GitHub Actions refreshes the static data file hourly, with a manual dispatch path for on-demand updates.</p>
-            </article>
-            <article class="status-block">
-              <span class="status-index">03</span>
-              <h3>Failure behavior</h3>
-              <p>Timeouts and partial results stay visible. Empty or stale snapshots fail the health check instead of being silently published.</p>
             </article>
           </div>
           <div class="status-footer">
