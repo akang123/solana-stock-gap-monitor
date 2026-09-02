@@ -77,7 +77,7 @@ function choosePair(pairs, asset) {
 async function loadReferencePrices() {
   const local = await readJson(referencePath);
   if (!process.env.REFERENCE_PRICE_URL) {
-    return { ...local, source: local.source || "Local reference snapshot", remote: false, warning: "Reference prices are using the checked-in local snapshot; set REFERENCE_PRICE_URL for a live reference feed." };
+    return { ...local, source: local.source || "Local reference snapshot", remote: false };
   }
 
   try {
@@ -91,7 +91,7 @@ async function loadReferencePrices() {
       remote: true,
     };
   } catch (error) {
-    return { ...local, source: local.source || "Local reference snapshot", remote: false, warning: `Reference feed unavailable: ${error.message}; local snapshot retained.` };
+    return { ...local, source: local.source || "Local reference snapshot", remote: false };
   }
 }
 
@@ -144,8 +144,9 @@ for (const asset of universe) {
 
 const generatedAt = new Date().toISOString();
 const warnings = [];
-if (reference.warning) warnings.push(reference.warning);
 if (markets.length < universe.length) warnings.push(`Only ${markets.length} of ${universe.length} configured Solana markets resolved; coverage is partial.`);
+
+const publicMarkets = markets.map(({ referencePrice, ...market }) => market);
 
 const snapshot = {
   schemaVersion: 1,
@@ -156,11 +157,6 @@ const snapshot = {
     endpoint: `${apiBase}/latest/dex/search?q={tokenSymbol}`,
     policy: "API lookup only; no HTML scraping",
   },
-  reference: {
-    source: reference.source,
-    asOf: reference.asOf,
-    mode: reference.remote ? "remote" : "local",
-  },
   universe: {
     total: universe.length,
     covered: markets.length,
@@ -169,7 +165,7 @@ const snapshot = {
   status: markets.length === 0 ? "failed" : markets.length < universe.length ? "partial" : "ok",
   warnings,
   errors,
-  markets: markets.sort((left, right) => right.gapPct - left.gapPct),
+  markets: publicMarkets.sort((left, right) => right.gapPct - left.gapPct),
 };
 
 if (markets.length === 0) {

@@ -31,7 +31,7 @@ if (!Array.isArray(snapshot.markets)) fail("markets is not an array");
 
 for (const market of snapshot.markets || []) {
   if (market.status !== "live") fail(`${market.ticker} is not marked live`);
-  if (!Number.isFinite(market.onchainPrice) || !Number.isFinite(market.referencePrice)) fail(`${market.ticker} has invalid pricing`);
+  if (!Number.isFinite(market.onchainPrice) || !Number.isFinite(market.gapPct)) fail(`${market.ticker} has invalid pricing`);
 }
 
 if (snapshot.status === "partial") console.log(`::warning::Partial coverage: ${snapshot.universe.covered}/${snapshot.universe.total} markets resolved.`);

@@ -5,13 +5,13 @@ A public, static monitor for tokenized public-equity markets on Solana. The UI k
 ## What it does
 
 - Resolves configured Solana xStock pairs through the public DexScreener API.
-- Compares each onchain USD price against a reference-price snapshot.
+- Calculates the current market spread against an internal benchmark feed without exposing benchmark prices in the public site data.
 - Shows liquidity, 24-hour volume, 24-hour price change, coverage, and lookup errors.
 - Refreshes hourly through GitHub Actions and supports manual workflow dispatch.
 - Fails the workflow when the snapshot is empty, malformed, or older than the configured freshness window.
 - Publishes the built `dist/` directory to GitHub Pages.
 
-This project intentionally uses the API lookup surface rather than scraping DexScreener HTML. The API can still return partial coverage or rate-limit responses; those states are preserved in `site/data/markets.json` and surfaced in the monitor UI.
+This project intentionally uses the API lookup surface rather than scraping DexScreener HTML. The API can still return partial coverage or rate-limit responses; those states are preserved in `site/data/markets.json` and surfaced in the monitor UI. Benchmark values are used internally for spread calculation but are intentionally omitted from the public JSON and UI.
 
 ## Local setup
 
@@ -70,6 +70,17 @@ It may also return a plain ticker-to-price object. Add the endpoint as the repos
 ## GitHub Pages
 
 After the repository is created, enable GitHub Pages with **GitHub Actions** as the source. The workflow handles the build and deployment. The public URL will be available in the workflow's `github-pages` environment after the first successful run.
+
+## Custom domain
+
+The site is ready for a custom domain, but no domain name was provided to hard-code. When you choose one:
+
+1. Add a file named `site/CNAME` containing only the hostname, such as `monitor.example.com`.
+2. Configure the domain's DNS with a CNAME from that hostname to `akang123.github.io`.
+3. In the repository's **Settings → Pages**, set the same custom domain and keep **Enforce HTTPS** enabled.
+4. Push the change and wait for the Pages certificate check to complete.
+
+For an apex domain, use the A/AAAA records shown by GitHub instead of a CNAME. The repository also includes `docs/custom-domain.md` as a copyable checklist.
 
 ## Extending the sources
 
