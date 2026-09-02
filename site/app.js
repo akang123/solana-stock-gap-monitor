@@ -34,7 +34,8 @@ function formatPrice(value) {
   if (!Number.isFinite(value)) return "—";
   if (value >= 100) return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   if (value >= 1) return `$${value.toFixed(2)}`;
-  return `$${value.toFixed(4)}`;
+  if (value >= 0.01) return `$${value.toFixed(4)}`;
+  return `$${value.toFixed(6)}`;
 }
 
 function formatGap(value) {
@@ -67,13 +68,16 @@ function escapeHtml(value) {
 
 function renderAlerts(data) {
   const warnings = [...(data?.warnings ?? []), ...(data?.errors ?? []).map((error) => error.message)];
-  if (elements.alerts) elements.alerts.innerHTML = warnings.map((warning) => `<div class="alert"><span class="alert-mark" aria-hidden="true">!</span><span>${escapeHtml(warning)}</span></div>`).join("");
+  const visibleWarnings = warnings.slice(0, 5);
+  if (warnings.length > visibleWarnings.length) visibleWarnings.push(`${warnings.length - visibleWarnings.length} additional refresh notes are available in the latest snapshot.`);
+  if (elements.alerts) elements.alerts.innerHTML = visibleWarnings.map((warning) => `<div class="alert"><span class="alert-mark" aria-hidden="true">!</span><span>${escapeHtml(warning)}</span></div>`).join("");
 }
 
 function renderSummary(data, markets) {
   const tracked = data?.universe?.total ?? markets.length;
   const covered = data?.universe?.covered ?? markets.length;
-  const averageGap = markets.length ? markets.reduce((total, market) => total + (market.gapPct || 0), 0) / markets.length : null;
+  const pricedMarkets = markets.filter((market) => Number.isFinite(market.gapPct));
+  const averageGap = pricedMarkets.length ? pricedMarkets.reduce((total, market) => total + market.gapPct, 0) / pricedMarkets.length : null;
   const liquidity = markets.reduce((total, market) => total + (market.liquidityUsd || 0), 0);
   const volume = markets.reduce((total, market) => total + (market.volume24hUsd || 0), 0);
   const gaps = markets.filter((market) => Math.abs(market.gapPct || 0) >= 1).length;
@@ -87,13 +91,17 @@ function renderSummary(data, markets) {
   setText("#stat-checked", markets.length);
   setText("#readout-date", formatDate(data?.generatedAt));
   setText("#last-updated", formatAge(data?.generatedAt));
-  setText("#coverage-copy", `${covered} of ${tracked} configured Solana xStock markets resolved on the last pass. ${data?.universe?.missing ? `${data.universe.missing} remain uncovered.` : "Coverage is complete."}`);
+  setText("#coverage-copy", `${covered} of ${tracked} configured Solana equity markets resolved with both on-chain and live stock prices. ${data?.universe?.missing ? `${data.universe.missing} remain uncovered.` : "Coverage is complete."}`);
 }
 
 function renderRows() {
   if (!elements.rows || !elements.empty || !elements.count || !elements.sort) return;
   const markets = state.data?.markets ?? [];
-  const filtered = markets.filter((market) => `${market.ticker} ${market.company} ${market.tokenSymbol}`.toLowerCase().includes(state.query.toLowerCase())).sort((left, right) => state.descending ? right.gapPct - left.gapPct : left.gapPct - right.gapPct);
+  const filtered = markets.filter((market) => `${market.ticker} ${market.company} ${market.tokenSymbol}`.toLowerCase().includes(state.query.toLowerCase())).sort((left, right) => {
+    const leftGap = Number.isFinite(left.gapPct) ? left.gapPct : -Infinity;
+    const rightGap = Number.isFinite(right.gapPct) ? right.gapPct : -Infinity;
+    return state.descending ? rightGap - leftGap : leftGap - rightGap;
+  });
   elements.count.textContent = `${filtered.length} of ${markets.length} shown`;
   elements.sort.innerHTML = `Gap <span aria-hidden="true">${state.descending ? "↓" : "↑"}</span>`;
   elements.sort.setAttribute("aria-label", `Sort by gap, currently ${state.descending ? "descending" : "ascending"}`);
@@ -105,6 +113,7 @@ function renderRows() {
       <td><div class="asset-cell"><span class="asset-mark" aria-hidden="true">${escapeHtml(market.ticker.slice(0, 2))}</span><span class="asset-name"><strong>${escapeHtml(market.ticker)} <span class="token-pill">${escapeHtml(market.tokenSymbol)}</span></strong><span>${escapeHtml(market.company)}</span></span></div></td>
       <td><div class="gap-cell"><span class="gap-value ${gapClass}">${formatGap(market.gapPct)}</span><span class="sub-value">market spread</span></div></td>
       <td><div class="price-cell"><a class="source-link price-main" href="${escapeHtml(sourceHref)}" target="_blank" rel="noreferrer">${formatPrice(market.onchainPrice)} ↗</a><span class="sub-value">${escapeHtml(market.dexId || "Solana DEX")}</span></div></td>
+      <td><div class="price-cell"><a class="source-link price-main" href="${escapeHtml(market.marketPriceUrl || `https://finance.yahoo.com/quote/${encodeURIComponent(market.marketSymbol || market.ticker)}`)}" target="_blank" rel="noreferrer">${formatPrice(market.marketPrice)} ↗</a><span class="sub-value">${escapeHtml(market.marketPriceSource || "Market feed")} · ${formatAge(market.marketPriceAsOf)}</span></div></td>
       <td class="mono">${formatCompact(market.liquidityUsd)}</td>
       <td><div class="price-cell"><span class="price-main mono">${formatCompact(market.volume24hUsd)}</span><span class="sub-value">${formatGap(market.priceChange24hPct)} 24h</span></div></td>
     </tr>`;

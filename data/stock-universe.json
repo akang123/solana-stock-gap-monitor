@@ -1,74 +1,330 @@
 [
   {
     "ticker": "AAPL",
+    "marketSymbol": "AAPL",
     "tokenSymbol": "AAPLx",
+    "tokenAddress": "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp",
     "company": "Apple",
     "discoveryQuery": "AAPLx"
   },
   {
+    "ticker": "ABT",
+    "marketSymbol": "ABT",
+    "tokenSymbol": "ABTx",
+    "tokenAddress": "XsHtf5RpxsQ7jeJ9ivNewouZKJHbPxhPoEy6yYvULr7",
+    "company": "Abbott",
+    "discoveryQuery": "ABTx"
+  },
+  {
+    "ticker": "AMBR",
+    "marketSymbol": "AMBR",
+    "tokenSymbol": "AMBRx",
+    "tokenAddress": "XsaQTCgebC2KPbf27KUhdv5JFvHhQ4GDAPURwrEhAzb",
+    "company": "Amber",
+    "discoveryQuery": "AMBRx"
+  },
+  {
+    "ticker": "AMD",
+    "marketSymbol": "AMD",
+    "tokenSymbol": "AMDx",
+    "tokenAddress": "XsXcJ6GZ9kVnjqGsjBnktRcuwMBmvKWh8S93RefZ1rF",
+    "company": "AMD",
+    "discoveryQuery": "AMDx"
+  },
+  {
     "ticker": "AMZN",
+    "marketSymbol": "AMZN",
     "tokenSymbol": "AMZNx",
+    "tokenAddress": "Xs3eBt7uRfJX8QUs4suhyU8p2M6DoUDrJyWBa8LLZsg",
     "company": "Amazon",
     "discoveryQuery": "AMZNx"
   },
   {
     "ticker": "AVGO",
+    "marketSymbol": "AVGO",
     "tokenSymbol": "AVGOx",
+    "tokenAddress": "XsgSaSvNSqLTtFuyWPBhK9196Xb9Bbdyjj4fH3cPJGo",
     "company": "Broadcom",
     "discoveryQuery": "AVGOx"
   },
   {
+    "ticker": "AZN",
+    "marketSymbol": "AZN",
+    "tokenSymbol": "AZNx",
+    "tokenAddress": "Xs3ZFkPYT2BN7qBMqf1j1bfTeTm1rFzEFSsQ1z3wAKU",
+    "company": "AstraZeneca",
+    "discoveryQuery": "AZNx"
+  },
+  {
+    "ticker": "BAC",
+    "marketSymbol": "BAC",
+    "tokenSymbol": "BACx",
+    "tokenAddress": "XswsQk4duEQmCbGzfqUUWYmi7pV7xpJ9eEmLHXCaEQP",
+    "company": "Bank of America",
+    "discoveryQuery": "BACx"
+  },
+  {
+    "ticker": "BMNR",
+    "marketSymbol": "BMNR",
+    "tokenSymbol": "BMNRx",
+    "tokenAddress": "XsrBCwaH8c46xiqXBChzobgufRKxQxAWUWbndgBNzFn",
+    "company": "Bitmine",
+    "discoveryQuery": "BMNRx"
+  },
+  {
     "ticker": "COIN",
+    "marketSymbol": "COIN",
     "tokenSymbol": "COINx",
+    "tokenAddress": "Xs7ZdzSHLU9ftNJsii5fCeJhoRWSC32SQGzGQtePxNu",
     "company": "Coinbase",
     "discoveryQuery": "COINx"
   },
   {
+    "ticker": "CRCL",
+    "marketSymbol": "CRCL",
+    "tokenSymbol": "CRCLx",
+    "tokenAddress": "XsueG8BtpquVJX9LVLLEGuViXUungE6WmK5YZ3p3bd1",
+    "company": "Circle",
+    "discoveryQuery": "CRCLx"
+  },
+  {
+    "ticker": "CSCO",
+    "marketSymbol": "CSCO",
+    "tokenSymbol": "CSCOx",
+    "tokenAddress": "Xsr3pdLQyXvDJBFgpR5nexCEZwXvigb8wbPYp4YoNFf",
+    "company": "Cisco",
+    "discoveryQuery": "CSCOx"
+  },
+  {
+    "ticker": "CVX",
+    "marketSymbol": "CVX",
+    "tokenSymbol": "CVXx",
+    "tokenAddress": "XsNNMt7WTNA2sV3jrb1NNfNgapxRF5i4i6GcnTRRHts",
+    "company": "Chevron",
+    "discoveryQuery": "CVXx"
+  },
+  {
+    "ticker": "DFDV",
+    "marketSymbol": "DFDV",
+    "tokenSymbol": "DFDVx",
+    "tokenAddress": "Xs2yquAgsHByNzx68WJC55WHjHBvG9JsMB7CWjTLyPy",
+    "company": "DFDV",
+    "discoveryQuery": "DFDVx"
+  },
+  {
+    "ticker": "GME",
+    "marketSymbol": "GME",
+    "tokenSymbol": "GMEx",
+    "tokenAddress": "Xsf9mBktVB9BSU5kf4nHxPq5hCBJ2j2ui3ecFGxPRGc",
+    "company": "Gamestop",
+    "discoveryQuery": "GMEx"
+  },
+  {
     "ticker": "GOOGL",
+    "marketSymbol": "GOOGL",
     "tokenSymbol": "GOOGLx",
+    "tokenAddress": "XsCPL9dNWBMvFtTmwcCA5v3xWPSMEBCszbQdiLLq6aN",
     "company": "Alphabet",
     "discoveryQuery": "GOOGLx"
   },
   {
     "ticker": "HOOD",
+    "marketSymbol": "HOOD",
     "tokenSymbol": "HOODx",
+    "tokenAddress": "XsvNBAYkrDRNhA7wPHQfX3ZUXZyZLdnCQDfHZ56bzpg",
     "company": "Robinhood",
     "discoveryQuery": "HOODx"
   },
   {
+    "ticker": "INTC",
+    "marketSymbol": "INTC",
+    "tokenSymbol": "INTCx",
+    "tokenAddress": "XshPgPdXFRWB8tP1j82rebb2Q9rPgGX37RuqzohmArM",
+    "company": "Intel",
+    "discoveryQuery": "INTCx"
+  },
+  {
+    "ticker": "KO",
+    "marketSymbol": "KO",
+    "tokenSymbol": "KOx",
+    "tokenAddress": "XsaBXg8dU5cPM6ehmVctMkVqoiRG2ZjMo1cyBJ3AykQ",
+    "company": "Coca-Cola",
+    "discoveryQuery": "KOx"
+  },
+  {
+    "ticker": "LLY",
+    "marketSymbol": "LLY",
+    "tokenSymbol": "LLYx",
+    "tokenAddress": "Xsnuv4omNoHozR6EEW5mXkw8Nrny5rB3jVfLqi6gKMH",
+    "company": "Eli Lilly",
+    "discoveryQuery": "LLYx"
+  },
+  {
+    "ticker": "MCD",
+    "marketSymbol": "MCD",
+    "tokenSymbol": "MCDx",
+    "tokenAddress": "XsqE9cRRpzxcGKDXj1BJ7Xmg4GRhZoyY1KpmGSxAWT2",
+    "company": "McDonald's",
+    "discoveryQuery": "MCDx"
+  },
+  {
     "ticker": "META",
+    "marketSymbol": "META",
     "tokenSymbol": "METAx",
+    "tokenAddress": "Xsa62P5mvPszXL1krVUnU5ar38bBSVcWAB6fmPCo5Zu",
     "company": "Meta",
     "discoveryQuery": "METAx"
   },
   {
+    "ticker": "MRNA",
+    "marketSymbol": "MRNA",
+    "tokenSymbol": "MRNAx",
+    "tokenAddress": "XsViHjyRbiSBskjizb1gszGTmZqtAH8TuqwJ7sB5AcP",
+    "company": "Moderna",
+    "discoveryQuery": "MRNAx"
+  },
+  {
+    "ticker": "MRVL",
+    "marketSymbol": "MRVL",
+    "tokenSymbol": "MRVLx",
+    "tokenAddress": "XsuxRGDzbLjnJ72v74b7p9VY6N66uYgTCyfwwRjVCJA",
+    "company": "Marvell",
+    "discoveryQuery": "MRVLx"
+  },
+  {
     "ticker": "MSFT",
+    "marketSymbol": "MSFT",
     "tokenSymbol": "MSFTx",
+    "tokenAddress": "XspzcW1PRtgf6Wj92HCiZdjzKCyFekVD8P5Ueh3dRMX",
     "company": "Microsoft",
     "discoveryQuery": "MSFTx"
   },
   {
     "ticker": "MSTR",
-    "tokenSymbol": "MSTR",
-    "company": "Strategy",
-    "discoveryQuery": "MSTR"
+    "marketSymbol": "MSTR",
+    "tokenSymbol": "MSTRx",
+    "tokenAddress": "XsP7xzNPvEHS1m6qfanPUGjNmdnmsLKEoNAnHjdxxyZ",
+    "company": "MicroStrategy",
+    "discoveryQuery": "MSTRx"
+  },
+  {
+    "ticker": "NFLX",
+    "marketSymbol": "NFLX",
+    "tokenSymbol": "NFLXx",
+    "tokenAddress": "XsEH7wWfJJu2ZT3UCFeVfALnVA6CP5ur7Ee11KmzVpL",
+    "company": "Netflix",
+    "discoveryQuery": "NFLXx"
   },
   {
     "ticker": "NVDA",
+    "marketSymbol": "NVDA",
     "tokenSymbol": "NVDAx",
+    "tokenAddress": "Xsc9qvGR1efVDFGLrVsmkzv3qi45LTBjeUKSPmx9qEh",
     "company": "NVIDIA",
     "discoveryQuery": "NVDAx"
   },
   {
+    "ticker": "NVO",
+    "marketSymbol": "NVO",
+    "tokenSymbol": "NVOx",
+    "tokenAddress": "XsfAzPzYrYjd4Dpa9BU3cusBsvWfVB9gBcyGC87S57n",
+    "company": "Novo Nordisk",
+    "discoveryQuery": "NVOx"
+  },
+  {
+    "ticker": "ORCL",
+    "marketSymbol": "ORCL",
+    "tokenSymbol": "ORCLx",
+    "tokenAddress": "XsjFwUPiLofddX5cWFHW35GCbXcSu1BCUGfxoQAQjeL",
+    "company": "Oracle",
+    "discoveryQuery": "ORCLx"
+  },
+  {
+    "ticker": "PEP",
+    "marketSymbol": "PEP",
+    "tokenSymbol": "PEPx",
+    "tokenAddress": "Xsv99frTRUeornyvCfvhnDesQDWuvns1M852Pez91vF",
+    "company": "PepsiCo",
+    "discoveryQuery": "PEPx"
+  },
+  {
+    "ticker": "PG",
+    "marketSymbol": "PG",
+    "tokenSymbol": "PGx",
+    "tokenAddress": "XsYdjDjNUygZ7yGKfQaB6TxLh2gC6RRjzLtLAGJrhzV",
+    "company": "Procter & Gamble",
+    "discoveryQuery": "PGx"
+  },
+  {
     "ticker": "PLTR",
+    "marketSymbol": "PLTR",
     "tokenSymbol": "PLTRx",
+    "tokenAddress": "XsoBhf2ufR8fTyNSjqfU71DYGaE6Z3SUGAidpzriAA4",
     "company": "Palantir",
     "discoveryQuery": "PLTRx"
   },
   {
+    "ticker": "SPCX",
+    "marketSymbol": "SPCX",
+    "tokenSymbol": "SPCXx",
+    "tokenAddress": "Xs3oZwbHvqis4NYcf4YKWmEia2eC84wSiVrcYcTqpH8",
+    "company": "SpaceX",
+    "discoveryQuery": "SPCXx"
+  },
+  {
+    "ticker": "STRC",
+    "marketSymbol": "STRC",
+    "tokenSymbol": "STRCx",
+    "tokenAddress": "Xs78JED6PFZxWc2wCEPspZW9kL3Se5J7L5TChKgsidH",
+    "company": "Strategy PP Variable",
+    "discoveryQuery": "STRCx"
+  },
+  {
     "ticker": "TSLA",
+    "marketSymbol": "TSLA",
     "tokenSymbol": "TSLAx",
+    "tokenAddress": "XsDoVfqeBukxuZHWhdvWHBhgEHjGNst4MLodqsJHzoB",
     "company": "Tesla",
     "discoveryQuery": "TSLAx"
+  },
+  {
+    "ticker": "UNH",
+    "marketSymbol": "UNH",
+    "tokenSymbol": "UNHx",
+    "tokenAddress": "XszvaiXGPwvk2nwb3o9C1CX4K6zH8sez11E6uyup6fe",
+    "company": "UnitedHealth",
+    "discoveryQuery": "UNHx"
+  },
+  {
+    "ticker": "V",
+    "marketSymbol": "V",
+    "tokenSymbol": "Vx",
+    "tokenAddress": "XsqgsbXwWogGJsNcVZ3TyVouy2MbTkfCFhCGGGcQZ2p",
+    "company": "Visa",
+    "discoveryQuery": "Vx"
+  },
+  {
+    "ticker": "VIDA",
+    "marketSymbol": "VIDA",
+    "tokenSymbol": "VIDAx",
+    "tokenAddress": "XsfCC9VL4DamVGNgdJpfLXB3sBVa158Gbx8sh7NzmTk",
+    "company": "Vida Global",
+    "discoveryQuery": "VIDAx"
+  },
+  {
+    "ticker": "WMT",
+    "marketSymbol": "WMT",
+    "tokenSymbol": "WMTx",
+    "tokenAddress": "Xs151QeqTCiuKtinzfRATnUESM2xTU6V9Wy8Vy538ci",
+    "company": "Walmart",
+    "discoveryQuery": "WMTx"
+  },
+  {
+    "ticker": "XOM",
+    "marketSymbol": "XOM",
+    "tokenSymbol": "XOMx",
+    "tokenAddress": "XsaHND8sHyfMfsWPj6kSdd5VwvCayZvjYgKmmcNL5qh",
+    "company": "Exxon Mobil",
+    "discoveryQuery": "XOMx"
   }
 ]

@@ -27,8 +27,6 @@ jobs:
           node-version: 20
 
       - name: Refresh market data
-        env:
-          REFERENCE_PRICE_URL: ${{ secrets.REFERENCE_PRICE_URL }}
         run: npm run refresh
 
       - name: Build static site
