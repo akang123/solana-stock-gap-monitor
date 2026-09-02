@@ -13,9 +13,11 @@ const elements = {
   refresh: document.querySelector("#refresh-button"),
   refreshNote: document.querySelector("#refresh-note"),
   alerts: document.querySelector("#alert-stack"),
+  addressCopy: document.querySelector("#address-copy"),
 };
 
 const numberFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+const copyableAddress = "CA: E4WwDQZpjuUNzLwVZkyMQEx8qW314RNAzKs4sdmRBAGS";
 
 const logoSymbols = Object.freeze({
   STRC: "MSTR",
@@ -86,6 +88,41 @@ function wireLogoFallbacks() {
       image.nextElementSibling?.removeAttribute("hidden");
     }, { once: true });
   });
+}
+
+async function copyAddress() {
+  const button = elements.addressCopy;
+  if (!button) return;
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(copyableAddress);
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = copyableAddress;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      if (!document.execCommand("copy")) throw new Error("Copy failed");
+      textarea.remove();
+    }
+    button.classList.add("is-copied");
+    button.setAttribute("aria-label", "Wallet address copied");
+    const status = button.querySelector(".address-copy-status");
+    if (status) status.textContent = "Copied";
+    window.setTimeout(() => {
+      button.classList.remove("is-copied");
+      button.setAttribute("aria-label", `Copy wallet address ${copyableAddress}`);
+      if (status) status.textContent = "Copy";
+    }, 1600);
+  } catch {
+    const status = button.querySelector(".address-copy-status");
+    if (status) status.textContent = "Copy failed";
+    window.setTimeout(() => {
+      if (status) status.textContent = "Copy";
+    }, 1600);
+  }
 }
 
 function renderAlerts() {
@@ -177,4 +214,5 @@ elements.sort?.addEventListener("click", () => {
 });
 
 elements.refresh?.addEventListener("click", () => loadData({ announce: true }));
+elements.addressCopy?.addEventListener("click", copyAddress);
 loadData();
