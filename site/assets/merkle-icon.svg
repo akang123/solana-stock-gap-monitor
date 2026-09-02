@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Merkle Research mark</title>
+  <rect width="128" height="128" fill="#f0f0ed"/>
+  <path d="M20 96V32h14l30 37 30-37h14v64H94V54L64 91 34 54v42H20Z" fill="#080808"/>
+  <path d="M55 96h18V80H55v16Z" fill="#f0f0ed"/>
+</svg>

@@ -37,11 +37,11 @@ function formatGap(value) {
   return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
 }
 
-function formatDate(value, withTime = false) {
+function formatDate(value) {
   if (!value) return "—";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "—";
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", ...(withTime ? { hour: "numeric", minute: "2-digit" } : {}) }).format(date);
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(date);
 }
 
 function formatAge(value) {
@@ -82,12 +82,7 @@ function renderSummary(data, markets) {
   document.querySelector("#stat-checked").textContent = markets.length;
   document.querySelector("#readout-date").textContent = formatDate(data?.generatedAt);
   document.querySelector("#last-updated").textContent = formatAge(data?.generatedAt);
-  document.querySelector("#reference-updated").textContent = formatDate(data?.reference?.asOf);
   document.querySelector("#coverage-copy").textContent = `${covered} of ${tracked} configured Solana xStock markets resolved on the last pass. ${data?.universe?.missing ? `${data.universe.missing} remain uncovered.` : "Coverage is complete."}`;
-}
-
-function dataSourceLabel(data) {
-  return data?.reference?.source || "Reference snapshot";
 }
 
 function renderRows() {
@@ -102,9 +97,8 @@ function renderRows() {
     const sourceHref = market.pairUrl || "https://dexscreener.com/solana";
     return `<tr>
       <td><div class="asset-cell"><span class="asset-mark" aria-hidden="true">${escapeHtml(market.ticker.slice(0, 2))}</span><span class="asset-name"><strong>${escapeHtml(market.ticker)} <span class="token-pill">${escapeHtml(market.tokenSymbol)}</span></strong><span>${escapeHtml(market.company)}</span></span></div></td>
-      <td><div class="gap-cell"><span class="gap-value ${gapClass}">${formatGap(market.gapPct)}</span><span class="gap-reference">${formatPrice(market.referencePrice)} ref.</span></div></td>
+      <td><div class="gap-cell"><span class="gap-value ${gapClass}">${formatGap(market.gapPct)}</span><span class="sub-value">market spread</span></div></td>
       <td><div class="price-cell"><a class="source-link price-main" href="${escapeHtml(sourceHref)}" target="_blank" rel="noreferrer">${formatPrice(market.onchainPrice)} ↗</a><span class="sub-value">${escapeHtml(market.dexId || "Solana DEX")}</span></div></td>
-      <td><div class="price-cell"><span class="price-main">${formatPrice(market.referencePrice)}</span><span class="sub-value">${escapeHtml(dataSourceLabel(state.data))}</span></div></td>
       <td class="mono">${formatCompact(market.liquidityUsd)}</td>
       <td><div class="price-cell"><span class="price-main mono">${formatCompact(market.volume24hUsd)}</span><span class="sub-value">${formatGap(market.priceChange24hPct)} 24h</span></div></td>
     </tr>`;
