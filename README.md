@@ -73,14 +73,15 @@ After the repository is created, enable GitHub Pages with **GitHub Actions** as 
 
 ## Custom domain
 
-The site is ready for a custom domain, but no domain name was provided to hard-code. When you choose one:
+The site is configured for `solanastockgapmonitor.site`.
 
-1. Add a file named `site/CNAME` containing only the hostname, such as `monitor.example.com`.
-2. Configure the domain's DNS with a CNAME from that hostname to `akang123.github.io`.
-3. In the repository's **Settings → Pages**, set the same custom domain and keep **Enforce HTTPS** enabled.
-4. Push the change and wait for the Pages certificate check to complete.
+1. At the domain registrar, remove the parking records for the apex (`@`) host.
+2. Add these four A records for `@`: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, and `185.199.111.153`.
+3. Optionally add a CNAME for `www` pointing to `akang123.github.io`.
+4. In the repository's **Settings → Pages**, set `solanastockgapmonitor.site` as the custom domain and keep **Enforce HTTPS** enabled once the certificate becomes available.
+5. Allow DNS propagation, then re-run the refresh-and-deploy workflow if the custom hostname does not update automatically.
 
-For an apex domain, use the A/AAAA records shown by GitHub instead of a CNAME. The repository also includes `docs/custom-domain.md` as a copyable checklist.
+The repository includes `docs/custom-domain.md` as a copyable checklist. Do not add a CNAME at `@`; apex domains use the four A records above.
 
 ## Extending the sources
 

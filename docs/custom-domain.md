@@ -1,11 +1,13 @@
 # Custom Domain Checklist
 
-The Pages deployment is already configured for workflow-based publishing. To attach a domain:
+The Pages deployment uses workflow-based publishing and is prepared for `solanastockgapmonitor.site`.
 
-1. Choose the exact hostname you want to use.
-2. Create `site/CNAME` with that hostname on one line.
-3. Point a subdomain CNAME at `akang123.github.io`, or use GitHub's published A/AAAA records for an apex domain.
-4. Open repository settings, choose **Pages**, set the custom domain, and enable HTTPS.
-5. Re-run the workflow after the DNS change and confirm the certificate becomes active.
+1. At the registrar, remove any parking records for the apex (`@`) host.
+2. Add A records for `@` pointing to `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, and `185.199.111.153`.
+3. Optionally point `www` to `akang123.github.io` with a CNAME record.
+4. Confirm `site/CNAME` contains only `solanastockgapmonitor.site`.
+5. In **GitHub → repository Settings → Pages**, set the custom domain to `solanastockgapmonitor.site`.
+6. Keep **Enforce HTTPS** enabled after GitHub provisions the certificate.
+7. Re-run `refresh-and-deploy.yml` after DNS propagation and confirm the certificate becomes active.
 
-No domain is hard-coded in this repository until the final hostname is known.
+Do not create a CNAME record for the apex (`@`); use the four A records instead.
