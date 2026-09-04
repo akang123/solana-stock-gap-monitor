@@ -27,6 +27,8 @@ jobs:
           node-version: 20
 
       - name: Refresh market data
+        env:
+          DEX_TOKEN_BATCH_SIZE: 1
         run: npm run refresh
 
       - name: Build static site
