@@ -66,7 +66,7 @@ function isPreferredPair(pair, asset) {
   if (symbol !== asset.tokenSymbol.toUpperCase()) return false;
   const name = String(pair?.baseToken?.name || "").toLowerCase();
   const company = asset.company.toLowerCase();
-  const stockMarker = /xstock|backpack securities|backed|tokenized/.test(name);
+  const stockMarker = /xstock|backpack securities|backed|tokenized\/test(name);
   const identityMarker = name.includes(company) || (asset.ticker === "MSTR" && name.includes("strategy"));
   return stockMarker && identityMarker;
 }
@@ -91,7 +91,7 @@ async function loadMarketPrices(universe) {
     });
 
     try {
-      const payload = await fetchJson(`${marketApiBase}/v7/finance/spark?${params.toString()}`);
+      const payload = await fetchJson(`${marketApiBase}/v7/finance/spark/${params.toString()}`);
       for (const result of payload?.spark?.result || []) {
         const response = result?.response?.[0];
         const meta = response?.meta || {};
@@ -118,6 +118,17 @@ async function loadOnchainPairs(universe) {
   const pairsByAddress = new Map();
   const errors = [];
 
+  function addPairs(pairs) {
+    for (const pair of pairs || []) {
+      if (pair?.chainId !== "solana") continue;
+      const address = String(pair?.baseToken?.address || "").toLowerCase();
+      if (!address) continue;
+      const existingPairs = pairsByAddress.get(address) || [];
+      existingPairs.push(pair);
+      pairsByAddress.set(address, existingPairs);
+    }
+  }
+
   for (let index = 0; index < universe.length; index += tokenBatchSize) {
     const batch = universe.slice(index, index + tokenBatchSize);
     const addresses = batch.map((asset) => asset.tokenAddress).filter(Boolean);
@@ -125,16 +136,27 @@ async function loadOnchainPairs(universe) {
 
     try {
       const payload = await fetchJson(`${apiBase}/latest/dex/tokens/${addresses.join(",")}`);
-      for (const pair of payload?.pairs || []) {
-        if (pair?.chainId !== "solana") continue;
-        const address = String(pair?.baseToken?.address || "").toLowerCase();
-        if (!address) continue;
-        const pairs = pairsByAddress.get(address) || [];
-        pairs.push(pair);
-        pairsByAddress.set(address, pairs);
-      }
+      addPairs(payload?.pairs);
     } catch (error) {
       errors.push(`Onchain batch ${index + 1}-${index + batch.length}: ${error.message}`);
+    }
+    await sleep(100);
+  }
+
+  const unresolvedAssets = universe.filter((asset) => {
+    const address = asset.tokenAddress.toLowerCase();
+    return !choosePair(pairsByAddress.get(address) || [], asset);
+  });
+
+  for (const asset of unresolvedAssets) {
+    try {
+      const payload = await fetchJson(`${apiBase}/latest/dex/tokens/${encodeURIComponent(asset.tokenAddress)}`);
+      addPairs(payload?.pairs);
+      if (choosePair(pairsByAddress.get(asset.tokenAddress.toLowerCase()) || [], asset)) {
+        console.log(`resolved ${asset.ticker} with individual Solana token lookup`);
+      }
+    } catch (error) {
+      errors.push(`Onchain fallback ${asset.ticker}: ${error.message}`);
     }
     await sleep(100);
   }
@@ -192,7 +214,7 @@ for (const asset of universe) {
     console.log(`resolved ${asset.ticker} on Solana with live market price`);
   } catch (error) {
     const message = `${asset.ticker}: ${error.message}`;
-    errors.push({ ticker: asset.ticker, message });
+    errors.push({ ticker: asset.toker, message });
     annotation("warning", message);
   }
 }
@@ -200,41 +222,4 @@ for (const asset of universe) {
 const generatedAt = new Date().toISOString();
 const warnings = [];
 if (markets.length < universe.length) warnings.push(`Only ${markets.length} of ${universe.length} configured Solana equity markets resolved; coverage is partial.`);
-if (marketQuoteResult.errors.length) warnings.push(`${marketQuoteResult.errors.length} live market-price request batches failed.`);
-if (onchainResult.errors.length) warnings.push(`${onchainResult.errors.length} on-chain request batches failed.`);
-
-const snapshot = {
-  schemaVersion: 2,
-  generatedAt,
-  network: "solana",
-  source: {
-    onchain: {
-      name: "DexScreener public API",
-      endpoint: `${apiBase}/latest/dex/tokens/{tokenAddresses}`,
-      policy: "API lookup only; no HTML scraping",
-    },
-    market: {
-      name: "Yahoo Finance public chart endpoint",
-      endpoint: `${marketApiBase}/v7/finance/spark?symbols={marketSymbols}`,
-      policy: "Public quote snapshot; no API key or local fallback",
-    },
-  },
-  universe: {
-    total: universe.length,
-    covered: markets.length,
-    missing: universe.length - markets.length,
-    marketPriceCovered: markets.length,
-  },
-  status: markets.length === 0 ? "failed" : markets.length < universe.length ? "partial" : "ok",
-  warnings,
-  errors: errors.length > 50 ? [...errors.slice(0, 50), { ticker: "SYSTEM", message: `${errors.length - 50} additional refresh errors omitted from the public snapshot.` }] : errors,
-  markets: markets.sort((left, right) => right.gapPct - left.gapPct),
-};
-
-if (markets.length === 0) {
-  annotation("error", "No markets resolved; keeping the previous snapshot and failing refresh.");
-  process.exitCode = 1;
-} else {
-  await writeFile(outputPath, JSON.stringify(snapshot, null, 2) + "\n");
-  console.log(`wrote ${markets.length}/${universe.length} markets to ${outputPath}`);
-}
+if (marketQuoteResult.mêë¢»
