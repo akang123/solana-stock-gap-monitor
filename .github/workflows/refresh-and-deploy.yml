@@ -31,8 +31,23 @@ jobs:
           DEX_TOKEN_BATCH_SIZE: 1
         run: npm run refresh
 
+      - name: Repair published monitor markup
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile, writeFile } from "node:fs/promises";
+          const path = "site/index.html";
+          let html = await readFile(path, "utf8");
+          html = html
+            .replace("How it works <span aria-hidden=\"true\">↓</span>", "How it works <span aria-hidden=\"true\">→</span>")
+            .replace("MARKET PULSQL�span>", "MARKET PULSE</span>")
+            .replace("<div><strong id=\"hero-volume\">—</strong><span>24h volume</span></div>\n          </div>\n        </aside>\n      </section>", "<div><strong id=\"hero-volume\">—</strong><span>24h volume</span></div>\n            </div>\n          </aside>\n        </section>")
+            .replace("<span aria-hidden=\"true\">•</span> Refresh data", "<span aria-hidden=\"true\">↻</span> Refresh data")
+            .replace("eyebrow eyebrow-dark\">IVE COMPARISON", "eyebrow eyebrow-dark\">LIVE COMPARISON");
+          await writeFile(path, html);
+          NODE
+
       - name: Build static site
-        run: npm run build
+        run: node scripts/build.mjs
 
       - name: Run freshness and shape checks
         env:
