@@ -54,22 +54,6 @@ Open `http://127.0.0.1:4173` after the build. The browser refresh button re-read
 - A snapshot with zero covered markets, invalid fields, or age beyond the freshness window fails the health check.
 - GitHub Actions annotations mark partial coverage and individual lookup failures in the workflow UI.
 
-## GitHub Pages
-
-After the repository is created, enable GitHub Pages with **GitHub Actions** as the source. The workflow handles the build and deployment. The public URL will be available in the workflow's `github-pages` environment after the first successful run.
-
-## Custom domain
-
-The site is configured for `solanastockgapmonitor.site`.
-
-1. At the domain registrar, remove the parking records for the apex (`@`) host.
-2. Add these four A records for `@`: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, and `185.199.111.153`.
-3. Optionally add a CNAME for `www` pointing to `akang123.github.io`.
-4. In the repository's **Settings → Pages**, set `solanastockgapmonitor.site` as the custom domain and keep **Enforce HTTPS** enabled once the certificate becomes available.
-5. Allow DNS propagation, then re-run the refresh-and-deploy workflow if the custom hostname does not update automatically.
-
-The repository includes `docs/custom-domain.md` as a copyable checklist. Do not add a CNAME at `@`; apex domains use the four A records above.
-
 ## Extending the sources
 
 To add another asset, append a verified Solana xStock entry to `data/stock-universe.json` with its token address and market symbol. Keep the normalized market shape (`onchainPrice`, `marketPrice`, `marketPriceAsOf`, `gapPct`, `liquidityUsd`, `volume24hUsd`, `pairUrl`) and do not mix provider-specific fields into the UI.
