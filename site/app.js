@@ -13,9 +13,11 @@ const elements = {
   refresh: document.querySelector("#refresh-button"),
   refreshNote: document.querySelector("#refresh-note"),
   alerts: document.querySelector("#alert-stack"),
+  addressCopy: document.querySelector("#address-copy"),
 };
 
 const numberFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+const copyableAddress = "CA: E4WwDQZpjuUNzLwVZkyMQEx8qW314RNAzKs4sdmRBAGS";
 
 const logoSymbols = Object.freeze({
   STRC: "MSTR",
@@ -88,6 +90,41 @@ function wireLogoFallbacks() {
   });
 }
 
+async function copyAddress() {
+  const button = elements.addressCopy;
+  if (!button) return;
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(copyableAddress);
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = copyableAddress;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      if (!document.execCommand("copy")) throw new Error("Copy failed");
+      textarea.remove();
+    }
+    button.classList.add("is-copied");
+    button.setAttribute("aria-label", "Wallet address copied");
+    const status = button.querySelector(".address-copy-status");
+    if (status) status.textContent = "Copied";
+    window.setTimeout(() => {
+      button.classList.remove("is-copied");
+      button.setAttribute("aria-label", `Copy wallet address ${copyableAddress}`);
+      if (status) status.textContent = "Copy";
+    }, 1600);
+  } catch {
+    const status = button.querySelector(".address-copy-status");
+    if (status) status.textContent = "Copy failed";
+    window.setTimeout(() => {
+      if (status) status.textContent = "Copy";
+    }, 1600);
+  }
+}
+
 function renderAlerts() {
   if (elements.alerts) elements.alerts.innerHTML = "";
 }
@@ -110,7 +147,9 @@ function renderSummary(data, markets) {
   setText("#stat-checked", markets.length);
   setText("#readout-date", formatDate(data?.generatedAt));
   setText("#last-updated", formatAge(data?.generatedAt));
-  setText("#coverage-copy", `${covered} of ${tracked} configured Solana equity markets resolved with both on-chain and live stock prices. ${data?.universe?.missing ? `${data.universe.missing} remain uncovered.` : "Coverage is complete."}`);
+  const solscanCovered = data?.universe?.solscanPriceCovered ?? markets.filter((market) => market.onchainSource === "Solscan Pro API").length;
+  const sourceCopy = solscanCovered === covered ? "Solscan prices active." : `${solscanCovered} using Solscan; ${covered - solscanCovered} using the DEX fallback.`;
+  setText("#coverage-copy", `${covered} of ${tracked} configured Solana equity markets resolved with live stock prices. ${sourceCopy} ${data?.universe?.missing ? `${data.universe.missing} remain uncovered.` : "Coverage is complete."}`);
 }
 
 function renderRows() {
@@ -127,12 +166,14 @@ function renderRows() {
   elements.empty.hidden = filtered.length !== 0;
   elements.rows.innerHTML = filtered.map((market) => {
     const gapClass = market.gapPct >= 0 ? "is-positive" : "is-negative";
-    const sourceHref = market.pairUrl || "https://dexscreener.com/solana";
+    const sourceHref = market.solscanUrl || market.pairUrl || "https://solscan.io";
     const logoUrl = getLogoUrl(market);
+    const onchainSource = market.onchainSource || market.dexId || "Solana DEX";
+    const onchainAge = market.onchainPriceAsOf ? ` · ${formatAge(market.onchainPriceAsOf)}` : "";
     return `<tr>
       <td><div class="asset-cell"><span class="asset-mark"><img class="asset-logo" src="${escapeHtml(logoUrl)}" alt="" width="28" height="28" loading="lazy" decoding="async" referrerpolicy="no-referrer" /><span class="asset-fallback" aria-hidden="true" hidden>${escapeHtml(getAssetFallback(market))}</span></span><span class="asset-name"><strong>${escapeHtml(market.ticker)} <span class="token-pill">${escapeHtml(market.tokenSymbol)}</span></strong><span>${escapeHtml(market.company)}</span></span></div></td>
       <td><div class="gap-cell"><span class="gap-value ${gapClass}">${formatGap(market.gapPct)}</span><span class="sub-value">market spread</span></div></td>
-      <td><div class="price-cell"><a class="source-link price-main" href="${escapeHtml(sourceHref)}" target="_blank" rel="noreferrer">${formatPrice(market.onchainPrice)} ↗</a><span class="sub-value">${escapeHtml(market.dexId || "Solana DEX")}</span></div></td>
+      <td><div class="price-cell"><a class="source-link price-main" href="${escapeHtml(sourceHref)}" target="_blank" rel="noreferrer">${formatPrice(market.onchainPrice)} ↗</a><span class="sub-value">${escapeHtml(onchainSource)}${escapeHtml(onchainAge)}</span></div></td>
       <td><div class="price-cell"><a class="source-link price-main" href="${escapeHtml(market.marketPriceUrl || `https://finance.yahoo.com/quote/${encodeURIComponent(market.marketSymbol || market.ticker)}`)}" target="_blank" rel="noreferrer">${formatPrice(market.marketPrice)} ↗</a><span class="sub-value">${escapeHtml(market.marketPriceSource || "Market feed")} · ${formatAge(market.marketPriceAsOf)}</span></div></td>
       <td class="mono">${formatCompact(market.liquidityUsd)}</td>
       <td><div class="price-cell"><span class="price-main mono">${formatCompact(market.volume24hUsd)}</span><span class="sub-value">${formatGap(market.priceChange24hPct)} 24h</span></div></td>
@@ -177,4 +218,5 @@ elements.sort?.addEventListener("click", () => {
 });
 
 elements.refresh?.addEventListener("click", () => loadData({ announce: true }));
+elements.addressCopy?.addEventListener("click", copyAddress);
 loadData();

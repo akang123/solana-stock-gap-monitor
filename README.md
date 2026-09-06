@@ -4,7 +4,8 @@ A public, static monitor for tokenized public-equity markets on Solana. The UI k
 
 ## What it does
 
-- Resolves configured Solana xStock pairs through the public DexScreener API.
+- Resolves Solana xStock addresses from the xStocks products catalog and links each token to Solscan.
+- Uses Solscan Pro API prices when `SOLSCAN_API_KEY` is configured, with an explicit DexScreener fallback until then.
 - Calculates the current market spread against a live USD stock-market quote from Yahoo Finance.
 - Shows liquidity, 24-hour volume, 24-hour price change, coverage, and lookup errors.
 - Refreshes hourly through GitHub Actions and supports manual workflow dispatch.
@@ -32,6 +33,10 @@ Open `http://127.0.0.1:4173` after the build. The browser refresh button re-read
 | --- | --- | --- |
 | `DEXSCREENER_API_BASE` | No | Override the API base URL for testing or a compatible proxy. |
 | `MARKET_PRICE_API_BASE` | No | Override the Yahoo Finance-compatible market-price API base URL. |
+| `XSTOCKS_PRODUCTS_URL` | No | xStocks products catalog used to resolve current Solana mint addresses. |
+| `SOLSCAN_API_KEY` | No | Solscan Pro API key; enables the official onchain price feed. |
+| `SOLSCAN_API_BASE` | No | Override the Solscan Pro API base URL. |
+| `SOLSCAN_BATCH_SIZE` | No | Solscan token addresses per request; capped at `50`. |
 | `FETCH_TIMEOUT_MS` | No | Per-request timeout; defaults to `12000`. |
 | `FETCH_MAX_ATTEMPTS` | No | Maximum attempts per lookup; defaults to `3`. |
 | `DEX_TOKEN_BATCH_SIZE` | No | Solana token addresses per DexScreener request; defaults to `25`. |
@@ -41,11 +46,12 @@ Open `http://127.0.0.1:4173` after the build. The browser refresh button re-read
 ## Data flow
 
 1. `data/stock-universe.json` defines the monitored ticker, xStock symbol, Solana token address, and stock-market symbol.
-2. `scripts/refresh-data.mjs` queries DexScreener's token endpoint in batches, filters to `chainId: solana`, and selects the highest-liquidity preferred xStock/Backpack/Backed match.
-3. The same refresh requests live USD quotes from Yahoo Finance's public chart endpoint in batches; there is no local reference-price fallback.
-4. The normalized snapshot is written to `site/data/markets.json`.
-5. `scripts/build.mjs` copies the static site to `dist/`.
-6. `scripts/health-check.mjs` verifies freshness, network, coverage, live market prices, and numeric price fields before deployment.
+2. `scripts/refresh-data.mjs` checks `xstocks.fi/products` and refreshes each configured Solana mint plus its Solscan token URL.
+3. When `SOLSCAN_API_KEY` exists, the refresh requests current token prices from Solscan's multi-token endpoint; otherwise it uses the explicit DexScreener fallback.
+4. The same refresh requests live USD quotes from Yahoo Finance's public chart endpoint in batches; there is no local reference-price fallback.
+5. The normalized snapshot is written to `site/data/markets.json`.
+6. `scripts/build.mjs` copies the static site to `dist/`.
+7. `scripts/health-check.mjs` verifies freshness, network, coverage, live market prices, and numeric price fields before deployment.
 
 ## Monitoring behavior
 
@@ -53,6 +59,22 @@ Open `http://127.0.0.1:4173` after the build. The browser refresh button re-read
 - A fully failed refresh leaves the previous snapshot in place and fails the workflow.
 - A snapshot with zero covered markets, invalid fields, or age beyond the freshness window fails the health check.
 - GitHub Actions annotations mark partial coverage and individual lookup failures in the workflow UI.
+
+## GitHub Pages
+
+After the repository is created, enable GitHub Pages with **GitHub Actions** as the source. The workflow handles the build and deployment. The public URL will be available in the workflow's `github-pages` environment after the first successful run.
+
+## Custom domain
+
+The site is configured for `solanastockgapmonitor.site`.
+
+1. At the domain registrar, remove the parking records for the apex (`@`) host.
+2. Add these four A records for `@`: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, and `185.199.111.153`.
+3. Optionally add a CNAME for `www` pointing to `akang123.github.io`.
+4. In the repository's **Settings → Pages**, set `solanastockgapmonitor.site` as the custom domain and keep **Enforce HTTPS** enabled once the certificate becomes available.
+5. Allow DNS propagation, then re-run the refresh-and-deploy workflow if the custom hostname does not update automatically.
+
+The repository includes `docs/custom-domain.md` as a copyable checklist. Do not add a CNAME at `@`; apex domains use the four A records above.
 
 ## Extending the sources
 
