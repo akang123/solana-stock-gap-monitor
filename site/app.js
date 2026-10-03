@@ -17,7 +17,7 @@ const elements = {
 };
 
 const numberFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
-const copyableAddress = "CA: E4WwDQZpjuUNzLwVZkyMQEx8qW314RNAzKs4sdmRBAGS";
+const copyableAddress = "CA: AY7Xbo4VKm7BF5FzbnbTpG3jZMdQueVXpBBryoe3ory";
 
 const logoSymbols = Object.freeze({
   STRC: "MSTR",
