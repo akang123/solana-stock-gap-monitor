@@ -4,7 +4,7 @@ A public, static monitor for tokenized public-equity markets on Solana. The UI k
 
 ## What it does
 
-- Resolves Solana xStock addresses from the xStocks products catalog and links each token to Solscan.
+- Resolves xStocks addresses from the xStocks products catalog and tracks additional Sunrise-listed Backpack Securities markets by verified Solana mint.
 - Uses Solscan Pro API prices when `SOLSCAN_API_KEY` is configured, with an explicit DexScreener fallback until then.
 - Calculates the current market spread against a live USD stock-market quote from Yahoo Finance.
 - Shows liquidity, 24-hour volume, 24-hour price change, coverage, and lookup errors.
@@ -12,7 +12,7 @@ A public, static monitor for tokenized public-equity markets on Solana. The UI k
 - Fails the workflow when the snapshot is empty, malformed, or older than the configured freshness window.
 - Publishes the built `dist/` directory to GitHub Pages.
 
-This project intentionally uses API lookup surfaces rather than scraping DexScreener HTML. The APIs can still return partial coverage or rate-limit responses; those states are preserved in `site/data/markets.json` and surfaced in the monitor UI. The tracked universe is a curated snapshot of currently active Solana xStock equities, excluding ETFs, symbols without a USD quote, and catalog entries without a live Solana pool.
+This project intentionally uses API lookup surfaces rather than scraping DexScreener HTML. The APIs can still return partial coverage or rate-limit responses; those states are preserved in `site/data/markets.json` and surfaced in the monitor UI. The tracked universe combines active Solana tokenized equities and equity ETFs from xStocks and Sunrise, with USD quotes and a matching live Solana pool.
 
 ## Local setup
 
@@ -45,8 +45,8 @@ Open `http://127.0.0.1:4173` after the build. The browser refresh button re-read
 
 ## Data flow
 
-1. `data/stock-universe.json` defines the monitored ticker, xStock symbol, Solana token address, and stock-market symbol.
-2. `scripts/refresh-data.mjs` checks `xstocks.fi/products` and refreshes each configured Solana mint plus its Solscan token URL.
+1. `data/stock-universe.json` defines xStocks tickers, symbols, Solana token addresses, and stock-market symbols; `data/sunrise-universe.json` holds the Sunrise-listed additions.
+2. `scripts/refresh-data.mjs` refreshes xStocks addresses from `xstocks.fi/products`, preserves the independently verified Sunrise mints, and links both groups to Solscan.
 3. When `SOLSCAN_API_KEY` exists, the refresh requests current token prices from Solscan's multi-token endpoint; otherwise it uses the explicit DexScreener fallback.
 4. The same refresh requests live USD quotes from Yahoo Finance's public chart endpoint in batches; there is no local reference-price fallback.
 5. The normalized snapshot is written to `site/data/markets.json`.
@@ -78,4 +78,4 @@ The repository includes `docs/custom-domain.md` as a copyable checklist. Do not 
 
 ## Extending the sources
 
-To add another asset, append a verified Solana xStock entry to `data/stock-universe.json` with its token address and market symbol. Keep the normalized market shape (`onchainPrice`, `marketPrice`, `marketPriceAsOf`, `gapPct`, `liquidityUsd`, `volume24hUsd`, `pairUrl`) and do not mix provider-specific fields into the UI.
+To add another asset, append a verified xStocks entry to `data/stock-universe.json` or a verified Sunrise-listed entry to `data/sunrise-universe.json`, with its Solana mint, token symbol, company identity, and Yahoo Finance market symbol. Keep the normalized market shape (`onchainPrice`, `marketPrice`, `marketPriceAsOf`, `gapPct`, `liquidityUsd`, `volume24hUsd`, `pairUrl`) and do not mix provider-specific fields into the UI.

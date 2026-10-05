@@ -1,0 +1,22 @@
+[
+  {"ticker":"DJT","marketSymbol":"DJT","tokenSymbol":"DJT","tokenAddress":"DJTu7vi8norVzdVAffgvb39VP7wjKeTsgaMBJrzfxvoF","company":"Trump Media","discoveryQuery":"DJT"},
+  {"ticker":"SNDK","marketSymbol":"SNDK","tokenSymbol":"SNDK","tokenAddress":"SNDKbwMUQvZhnLnxLduradgLHG5KrPuKwpnrkkGRhfH","company":"Sandisk","discoveryQuery":"SNDK"},
+  {"ticker":"SKHY","marketSymbol":"SKHY","tokenSymbol":"SKHY","tokenAddress":"SKHYhSjuRWHgikq8eRKbtBbpABgJSkd7ytQV14i9EQ3","company":"SK Hynix","discoveryQuery":"SKHY"},
+  {"ticker":"IBM","marketSymbol":"IBM","tokenSymbol":"IBM","tokenAddress":"BMKdM4yUxX12moFqVk195k7coMbaybd4RUKCUdm7D1Sk","company":"International Business Machines","discoveryQuery":"IBM"},
+  {"ticker":"BLK","marketSymbol":"BLK","tokenSymbol":"BLK","tokenAddress":"BLKKYfF41c6xRPrtX1rdYbxLE1xxEdZUnxQsB5hcZ8Nf","company":"BlackRock","discoveryQuery":"BLK"},
+  {"ticker":"PUSA","marketSymbol":"PUSA","tokenSymbol":"PUSA","tokenAddress":"PUSAG1stksTcAoK9MjinEHUwAYRJsbovywYCk37m6hy","company":"Powerus","discoveryQuery":"PUSA"},
+  {"ticker":"DKNG","marketSymbol":"DKNG","tokenSymbol":"DKNG","tokenAddress":"DKNGQFNGQmoBdXSRGKJ8tTu7uPDasw5JDcfMmWniNfow","company":"DraftKings","discoveryQuery":"DKNG"},
+  {"ticker":"DELL","marketSymbol":"DELL","tokenSymbol":"DELL","tokenAddress":"DELL2aRKQz7DMq5DrKLtkn47ZCnbxXPZXrSGbkmd13wy","company":"Dell Technologies","discoveryQuery":"DELL"},
+  {"ticker":"HIMS","marketSymbol":"HIMS","tokenSymbol":"HIMS","tokenAddress":"HiMSSzzwkZkrXJ4PGVJRdtfLaANeAztjjcgk5Dxe7Lwx","company":"Hims & Hers Health","discoveryQuery":"HIMS"},
+  {"ticker":"TTWO","marketSymbol":"TTWO","tokenSymbol":"TTWO","tokenAddress":"TTWofwAge91oFhZs7kpQdyrVRkmevgM88xijGvQFbKo","company":"Take-Two Interactive","discoveryQuery":"TTWO"},
+  {"ticker":"MGM","marketSymbol":"MGM","tokenSymbol":"MGM","tokenAddress":"MGMuubtUEirmkhfEQdmGUh4pr7HuUdMWcZXFtpPbVJD","company":"MGM Resorts","discoveryQuery":"MGM"},
+  {"ticker":"NKE","marketSymbol":"NKE","tokenSymbol":"NKE","tokenAddress":"NKEda5nHhNGgjrE9nDdMvaEmkmJ96qqxzBVZEcKmjSg","company":"NIKE","discoveryQuery":"NKE"},
+  {"ticker":"DRAM","marketSymbol":"DRAM","tokenSymbol":"DRAM","tokenAddress":"DRAMjSWR7HRfJKjRkvQWYL2bcaejaVhuxEcjf4pAY4Cw","company":"Roundhill Memory ETF","discoveryQuery":"DRAM"},
+  {"ticker":"BOT","marketSymbol":"BOT","tokenSymbol":"BOT","tokenAddress":"BoTx8y9ynfdxf5ZjWtCoBVkff52qKA82ysaLU8ZM6d8T","company":"RoboStrategy","discoveryQuery":"BOT"},
+  {"ticker":"RDDT","marketSymbol":"RDDT","tokenSymbol":"RDDT","tokenAddress":"RDDTGbhHwVXfyCvQMXzzowKjf5qrYBZAnehoXW83ooh","company":"Reddit","discoveryQuery":"RDDT"},
+  {"ticker":"CYPH","marketSymbol":"CYPH","tokenSymbol":"CYPH","tokenAddress":"CYPHuMmCL1GxJWa2tsPhLKykC7GrHJTCHwbXD4g5uawK","company":"Cypherpunk Technologies","discoveryQuery":"CYPH"},
+  {"ticker":"BABA","marketSymbol":"BABA","tokenSymbol":"BABA","tokenAddress":"BABANGA4JE7Kkam4nTrALAwAVgsNJUuFJnnkF7S16BZp","company":"Alibaba Group","discoveryQuery":"BABA"},
+  {"ticker":"JNJ","marketSymbol":"JNJ","tokenSymbol":"JNJ","tokenAddress":"JNJg1znKdF712Phe7L7z52AATAvEjEytBdN2w8Lnh1Y","company":"Johnson & Johnson","discoveryQuery":"JNJ"},
+  {"ticker":"AMC","marketSymbol":"AMC","tokenSymbol":"AMC","tokenAddress":"AMC1qwR9KhiyrQBRPrxnfo4JfMeMZqEBvt5tgTytNNoc","company":"AMC Entertainment","discoveryQuery":"AMC"},
+  {"ticker":"BE","marketSymbol":"BE","tokenSymbol":"BE","tokenAddress":"BEBVfXZ8uCxRBuunEbW9wcq9r7W9ySNo14oJBJkDgpZx","company":"Bloom Energy","discoveryQuery":"BE"}
+]

@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const universePath = resolve(projectRoot, "data/stock-universe.json");
+const sunriseUniversePath = resolve(projectRoot, "data/sunrise-universe.json");
 const outputPath = resolve(projectRoot, "site/data/markets.json");
 const apiBase = (process.env.DEXSCREENER_API_BASE || "https://api.dexscreener.com").replace(/\/$/, "");
 const marketApiBase = (process.env.MARKET_PRICE_API_BASE || "https://query1.finance.yahoo.com").replace(/\/$/, "");
@@ -287,7 +288,7 @@ async function loadOnchainPairs(universe) {
 }
 
 function resolveAsset(asset, pair, marketPrices, solscanPrices) {
-  if (!pair) throw new Error(`no preferred Solana xStock pair found for ${asset.tokenSymbol}`);
+  if (!pair) throw new Error(`no preferred Solana tokenized-equity pair found for ${asset.tokenSymbol}`);
   const quote = marketPrices.get(asset.marketSymbol);
   if (!quote) throw new Error(`no live market price found for ${asset.marketSymbol}`);
   if (quote.currency !== "USD") throw new Error(`market price for ${asset.marketSymbol} is quoted in ${quote.currency}, not USD`);
@@ -326,9 +327,18 @@ function resolveAsset(asset, pair, marketPrices, solscanPrices) {
   };
 }
 
-const configuredUniverse = await readJson(universePath);
+const [configuredUniverse, sunriseUniverse] = await Promise.all([
+  readJson(universePath),
+  readJson(sunriseUniversePath),
+]);
 const xstocksResult = await loadXstocksMetadata(configuredUniverse);
-const universe = xstocksResult.universe;
+const universe = [
+  ...xstocksResult.universe,
+  ...sunriseUniverse.map((asset) => ({
+    ...asset,
+    solscanUrl: `https://solscan.io/token/${asset.tokenAddress}`,
+  })),
+];
 const marketQuoteResult = await loadMarketPrices(universe);
 const solscanResult = await loadSolscanPrices(universe);
 const onchainResult = await loadOnchainPairs(universe);
@@ -363,11 +373,12 @@ const snapshot = {
   network: "solana",
   source: {
     onchain: {
-      name: solscanResult.configured ? "Solscan Pro API via xStocks Solana mints" : "Solscan Pro API pending API key",
+      name: solscanResult.configured ? "Solscan Pro API via configured Solana stock mints" : "Solscan Pro API pending API key",
       endpoint: `${solscanApiBase}/token/price/multi?address={tokenAddresses}`,
       publicPage: "https://solscan.io/token/{tokenAddress}",
       catalog: xstocksProductsUrl,
-      policy: solscanResult.configured ? "Official API lookup using token addresses from xStocks products" : "DexScreener fallback until SOLSCAN_API_KEY is configured",
+      catalogs: [xstocksProductsUrl, "https://sunrise.xyz/tokens"],
+      policy: solscanResult.configured ? "Official API lookup using configured issuer-catalog Solana token addresses" : "DexScreener fallback until SOLSCAN_API_KEY is configured",
       fallback: `${apiBase}/latest/dex/tokens/{tokenAddresses}`,
     },
     market: {
