@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#080808" />
+    <meta name="description" content="Clear four increasingly complex stock ticker mazes in the Solana Stock Gap Monitor arcade." />
+    <link rel="icon" type="image/png" href="./assets/merkle-icon.png" />
+    <link rel="stylesheet" href="./styles.css?v=dev" />
+    <link rel="stylesheet" href="./game.css?v=dev" />
+    <title>Stock Gap Maze — Merkle Research</title>
+  </head>
+  <body class="game-body">
+    <div class="page-shell game-shell">
+      <header class="site-header game-header">
+        <a class="wordmark" href="./" aria-label="Back to Solana Stock Gap Monitor">
+          <img class="brand-logo" src="./assets/merkle-icon.png" alt="" width="22" height="22" />
+          <span>MERKLE RESEARCH</span>
+        </a>
+        <div class="game-header-meta">
+          <span>ARCADE / FOUR-LEVEL RUN</span>
+          <a class="game-back-link" href="./">← Back to monitor</a>
+        </div>
+      </header>
+
+      <main class="game-main">
+        <section class="game-intro" aria-labelledby="game-title">
+          <div>
+            <p class="eyebrow">SOLANA / EQUITIES / PLAY</p>
+            <h1 id="game-title">The ticker<br /><em>run.</em></h1>
+          </div>
+          <p class="game-deck">Pick up five market tickers. Find the exit before the clock runs out.</p>
+        </section>
+
+        <section class="game-layout" aria-label="Stock Gap Maze level 01: First Light">
+          <div class="game-play-column">
+            <div class="game-stage" id="game-stage">
+              <canvas id="game-canvas" tabindex="0" aria-label="Three-dimensional ticker maze. Use WASD or arrow keys to move." aria-describedby="game-controls-copy"></canvas>
+              <div class="stage-coordinate" aria-hidden="true"><span id="stage-level">LEVEL 01</span><span id="stage-grid">13 × 9 GRID</span></div>
+              <div class="game-loading" id="game-loading" role="status">Loading verified tickers…</div>
+              <div class="game-overlay" id="game-overlay" aria-live="polite">
+                <div class="overlay-panel" id="welcome-panel">
+                  <p class="eyebrow" id="welcome-kicker">CAMPAIGN / 4 LEVELS</p>
+                  <h2>Collect.<br /><em>Escape.</em></h2>
+                  <p id="welcome-copy">Clear four increasingly intricate mazes in sequence. Collect all five tickers and reach each exit to set a campaign time.</p>
+                  <div class="game-run-options">
+                    <label for="run-mode">RUN MODE
+                      <select id="run-mode">
+                        <option value="campaign" selected>Full campaign</option>
+                        <option value="single">Single level</option>
+                      </select>
+                    </label>
+                    <label for="level-select">LEVEL
+                      <select id="level-select" disabled></select>
+                    </label>
+                    <p id="level-note">Campaign begins at Level 01 and unlocks the next map after each clear.</p>
+                  </div>
+                  <button class="button button-light game-action" id="start-game" type="button" disabled>Loading ticker board… <span aria-hidden="true">→</span></button>
+                  <span class="game-footnote">IN-GAME POINTS ONLY · NO TRADING OR TOKEN TRANSFERS</span>
+                </div>
+                <div class="overlay-panel result-panel" id="result-panel" hidden>
+                  <p class="eyebrow" id="result-kicker">RUN COMPLETE</p>
+                  <h2 id="result-title">Clean exit.</h2>
+                  <p id="result-copy">Ticker cards collected: 0 / 5.</p>
+                  <div class="result-actions">
+                    <button class="button button-light game-action" id="retry-game" type="button">Run it back <span aria-hidden="true">↻</span></button>
+                    <button class="button button-dark game-action" id="share-scorecard" type="button" hidden>Share scorecard <span aria-hidden="true">↗</span></button>
+                    <a class="button button-dark game-action" href="./">Back to monitor <span aria-hidden="true">↗</span></a>
+                  </div>
+                  <p class="share-status" id="share-status" role="status" aria-live="polite"></p>
+                </div>
+              </div>
+              <div class="game-countdown" id="game-countdown" aria-live="assertive" hidden></div>
+              <div class="game-error" id="game-error" role="alert" hidden></div>
+              <div class="mobile-controls" id="mobile-controls" aria-label="Movement controls">
+                <button type="button" data-direction="up" aria-label="Move forward">↑</button>
+                <button type="button" data-direction="left" aria-label="Move left">←</button>
+                <button type="button" data-direction="down" aria-label="Move back">↓</button>
+                <button type="button" data-direction="right" aria-label="Move right">→</button>
+              </div>
+            </div>
+            <div class="game-control-strip" id="game-controls-copy">
+              <span><strong>WASD</strong> / ARROWS TO MOVE</span>
+              <span><strong>COLLECT 5</strong> · FIND THE EXIT</span>
+              <span class="terminal-mark">MRK / PLAY-01</span>
+            </div>
+          </div>
+
+          <aside class="game-sidebar" aria-label="Run status">
+            <div class="score-readout">
+              <div class="sidebar-label"><span>YOUR SCORE</span><span class="score-live" id="score-live-dot" aria-hidden="true"></span></div>
+              <output class="score-value" id="score-value" aria-live="polite">000</output>
+              <span class="score-unit">POINTS · IN-GAME ONLY</span>
+            </div>
+            <div class="run-stats">
+              <div><span>TIME LEFT</span><strong id="time-value">01:00</strong></div>
+              <div><span>FOUND</span><strong id="found-value">00 / 05</strong></div>
+              <div><span>LEVEL BEST</span><strong id="best-value">—</strong></div>
+            </div>
+            <div class="ticker-board">
+              <div class="sidebar-label"><span>TICKER BOARD</span><span id="ticker-status">LOADING</span></div>
+              <ol class="ticker-list" id="ticker-list"></ol>
+            </div>
+            <p class="game-disclaimer">Collectibles are game props. No securities or tokens are transferred.</p>
+          </aside>
+        </section>
+
+        <section class="leaderboard-card" aria-labelledby="leaderboard-title">
+          <div class="leaderboard-heading">
+            <div>
+              <p class="eyebrow">PERSONAL RECORDS</p>
+              <h2 id="leaderboard-title">Local leaderboard</h2>
+            </div>
+            <span class="leaderboard-local">THIS BROWSER ONLY</span>
+          </div>
+          <div class="leaderboard-table-wrap">
+            <table class="leaderboard-table">
+              <thead><tr><th scope="col">LEVEL</th><th scope="col">FASTEST</th><th scope="col">STATUS</th></tr></thead>
+              <tbody id="leaderboard-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+
+      <footer class="game-footer">
+        <span>MERKLE RESEARCH / SIGNALS FOR THE NEXT MARKET</span>
+        <a href="./">RETURN TO THE LIVE MONITOR ↗</a>
+      </footer>
+    </div>
+    <script type="module" src="./game.js?v=dev"></script>
+  </body>
+</html>
