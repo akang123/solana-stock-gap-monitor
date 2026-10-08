@@ -239,9 +239,8 @@ function renderLeaderboard() {
     state.textContent = index <= game.records.unlockedLevel ? (record ? "CLEARED" : "OPEN") : "LOCKED";
     state.className = index > game.records.unlockedLevel ? "is-locked" : "";
     row.append(name, time, state);
-    campaignRow.append(campaignName, campaignTime, campaignState);
-    elements.leaderboard.append(campaignRow);
-  }
+    elements.leaderboard.append(row);
+  });
   const campaignRow = document.createElement("tr");
   campaignRow.className = "campaign-record-row";
   const campaignName = document.createElement("th");
