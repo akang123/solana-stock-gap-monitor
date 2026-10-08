@@ -120,8 +120,10 @@
   .ticker-list { grid-template-columns: 1fr 1fr; column-gap: 15px; }
   .ticker-list li { min-height: 44px; }
   .game-disclaimer { grid-column: 1 / -1; margin: 0; padding-top: 2px; }
-  .mobile-controls { position: absolute; z-index: 2; right: 16px; bottom: 15px; display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(2, 46px); gap: 4px; }
-  .mobile-controls button { display: grid; place-items: center; width: 48px; height: 46px; border: 1px solid rgba(227,235,221,.31); border-radius: 2px; background: rgba(9,12,11,.85); color: #eff3e9; font-size: 18px; touch-action: none; user-select: none; }
+  .mobile-controls { position: absolute; z-index: 2; right: 16px; bottom: 15px; display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(2, 46px); gap: 4px; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+  .mobile-controls button { display: grid; place-items: center; width: 48px; height: 46px; border: 1px solid rgba(227,235,221,.31); border-radius: 2px; background: rgba(9,12,11,.85); color: #eff3e9; font-size: 18px; touch-action: none; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+  .mobile-controls button:focus:not(:focus-visible) { outline: none; }
+  .mobile-controls button:focus-visible { outline: 2px solid #a7d9b4; outline-offset: 2px; }
   .mobile-controls button:active { border-color: #a7d9b4; background: rgba(38,58,45,.94); }
   .mobile-controls button[data-direction="up"] { grid-column: 2; grid-row: 1; }
   .mobile-controls button[data-direction="left"] { grid-column: 1; grid-row: 2; }
