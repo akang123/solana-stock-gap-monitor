@@ -116,6 +116,7 @@ const elements = {
   stageGrid: document.querySelector("#stage-grid"),
   layout: document.querySelector(".game-layout"),
   share: document.querySelector("#share-scorecard"),
+  downloadScorecard: document.querySelector("#download-scorecard"),
   shareStatus: document.querySelector("#share-status"),
   leaderboard: document.querySelector("#leaderboard-body"),
   mobileControls: document.querySelector("#mobile-controls"),
@@ -144,6 +145,7 @@ const game = {
   campaignScore: 0,
   pendingNextLevel: false,
   completedRun: null,
+  audioContext: null,
   score: 0,
   collected: 0,
   startedAt: 0,
@@ -609,6 +611,41 @@ function delay(milliseconds) {
   return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 }
 
+function unlockAudio() {
+  try {
+    const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextConstructor) return;
+    game.audioContext ??= new AudioContextConstructor();
+    if (game.audioContext.state === "suspended") game.audioContext.resume().catch(() => {});
+  } catch {
+    game.audioContext = null;
+  }
+}
+
+function playPickupChime() {
+  const context = game.audioContext;
+  if (!context || context.state !== "running") return;
+  try {
+    const now = context.currentTime;
+    [659.25, 987.77].forEach((frequency, index) => {
+      const startAt = now + index * 0.045;
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(frequency, startAt);
+      gain.gain.setValueAtTime(0.0001, startAt);
+      gain.gain.exponentialRampToValueAtTime(0.055, startAt + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.2);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(startAt);
+      oscillator.stop(startAt + 0.21);
+    });
+  } catch {
+    return;
+  }
+}
+
 async function startRun() {
   if (game.state !== "ready") return;
   game.state = "countdown";
@@ -629,6 +666,7 @@ async function startRun() {
 
 function startSelectedRun() {
   if (game.state !== "ready") return;
+  unlockAudio();
   game.runMode = elements.runMode.value;
   game.campaignSeconds = 0;
   game.campaignScore = 0;
@@ -699,6 +737,7 @@ function finishRun(result) {
       ? 'Restart campaign <span aria-hidden="true">↻</span>'
       : 'Run it back <span aria-hidden="true">↻</span>';
   elements.share.hidden = result !== "complete";
+  elements.downloadScorecard.hidden = result !== "complete";
   elements.shareStatus.textContent = "";
   setOverlayMode(result);
 }
@@ -766,6 +805,31 @@ function scorecardBlob(result) {
   });
 }
 
+function downloadScorecardFile(blob, filename) {
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = filename;
+  link.click();
+  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+}
+
+async function downloadScorecard() {
+  const result = game.completedRun;
+  if (!result) return;
+  elements.downloadScorecard.disabled = true;
+  elements.shareStatus.textContent = "PREPARING SCORECARD…";
+  try {
+    const blob = await scorecardBlob(result);
+    downloadScorecardFile(blob, `stock-gap-level-${result.levelId}-scorecard.png`);
+    elements.shareStatus.textContent = "PNG DOWNLOADED · READY TO SHARE";
+  } catch {
+    elements.shareStatus.textContent = "COULD NOT EXPORT SCORECARD · TRY AGAIN";
+  } finally {
+    elements.downloadScorecard.disabled = false;
+  }
+}
+
 async function shareScorecard() {
   const result = game.completedRun;
   if (!result) return;
@@ -780,12 +844,7 @@ async function shareScorecard() {
       await navigator.share({ title: `Stock Gap Maze · Level ${result.levelId}`, text: shareText, files: [file] });
       elements.shareStatus.textContent = "SCORECARD SHARED";
     } else {
-      const objectUrl = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = objectUrl;
-      link.download = filename;
-      link.click();
-      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      downloadScorecardFile(blob, filename);
       elements.shareStatus.textContent = "PNG DOWNLOADED · READY TO SHARE";
     }
   } catch (error) {
@@ -834,6 +893,7 @@ function collectNearbyPickups() {
     pickup.group.visible = false;
     game.collected += 1;
     game.score += POINTS_PER_PICKUP;
+    playPickupChime();
     setScore();
     const row = elements.tickerList.querySelector(`[data-pickup-index="${index}"]`);
     row?.classList.add("is-collected");
@@ -952,6 +1012,7 @@ async function initialize() {
   elements.start.addEventListener("click", startSelectedRun);
   elements.retry.addEventListener("click", retryOrContinue);
   elements.share.addEventListener("click", shareScorecard);
+  elements.downloadScorecard.addEventListener("click", downloadScorecard);
 
   try {
     const [THREE] = await Promise.all([import(THREE_URL), loadAssets()]);
@@ -977,6 +1038,7 @@ async function initialize() {
       window.cancelAnimationFrame(game.animationFrame);
       if (game.scene) disposeScene(game.scene);
       game.renderer?.dispose();
+      if (game.audioContext && game.audioContext.state !== "closed") game.audioContext.close().catch(() => {});
     }, { once: true });
     game.animationFrame = window.requestAnimationFrame(tick);
   } catch (error) {
