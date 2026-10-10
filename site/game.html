@@ -88,6 +88,11 @@
           </div>
 
           <aside class="game-sidebar" aria-label="Run status">
+            <section class="plays-counter" id="plays-counter" data-endpoint="https://stock-gap-maze-counter.merkle-solana-stock-gap-monitor.workers.dev/api/plays" aria-label="Total game plays">
+              <div class="plays-counter-heading"><span class="plays-counter-dot" aria-hidden="true"></span><span>COMMUNITY ACTIVITY</span></div>
+              <output class="plays-counter-value" id="plays-count" aria-live="polite" aria-label="Total game plays">—</output>
+              <span class="plays-counter-status" id="plays-status" role="status">Connecting shared counter…</span>
+            </section>
             <div class="score-readout">
               <div class="sidebar-label"><span>YOUR SCORE</span><span class="score-live" id="score-live-dot" aria-hidden="true"></span></div>
               <output class="score-value" id="score-value" aria-live="polite">000</output>

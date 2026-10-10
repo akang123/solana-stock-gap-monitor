@@ -85,6 +85,7 @@ const POINTS_PER_PICKUP = 100;
 const PLAYER_RADIUS = 0.19;
 const MOVE_SPEED = 3.35;
 const STORAGE_KEY = "merkle-stock-gap-maze-records-v2";
+const PAGE_VISIT_COUNT = 1014;
 
 const elements = {
   stage: document.querySelector("#game-stage"),
@@ -120,6 +121,9 @@ const elements = {
   shareStatus: document.querySelector("#share-status"),
   leaderboard: document.querySelector("#leaderboard-body"),
   mobileControls: document.querySelector("#mobile-controls"),
+  playsCounter: document.querySelector("#plays-counter"),
+  playsCount: document.querySelector("#plays-count"),
+  playsStatus: document.querySelector("#plays-status"),
 };
 
 const input = {
@@ -1000,7 +1004,33 @@ function retryOrContinue() {
   startRun();
 }
 
+async function countGamePageVisit() {
+  const endpoint = elements.playsCounter?.dataset.endpoint;
+  if (!endpoint) return;
+
+  elements.playsStatus.textContent = "Recording this visit…";
+  elements.playsCounter.classList.remove("is-unavailable");
+
+  try {
+    const response = await fetch(endpoint, { cache: "no-store", mode: "cors" });
+    if (!response.ok) throw new Error(`Counter request failed (${response.status})`);
+    const data = await response.json();
+    if (!Number.isSafeInteger(data.count) || data.count < PAGE_VISIT_COUNT) throw new Error("Counter response was invalid");
+
+    elements.playsCount.textContent = new Intl.NumberFormat("en-US").format(data.count);
+    elements.playsCount.setAttribute("aria-label", `${data.count.toLocaleString("en-US")} total game plays`);
+    elements.playsStatus.textContent = "TOTAL GAME PLAYS";
+  } catch {
+    elements.playsCounter.classList.add("is-unavailable");
+    elements.playsStatus.textContent = "Shared count unavailable";
+  }
+}
+
 async function initialize() {
+  void countGamePageVisit();
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) void countGamePageVisit();
+  });
   attachControls();
   game.records = readRecords();
   updateLevelOptions();
