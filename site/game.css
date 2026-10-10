@@ -46,6 +46,12 @@
 .game-control-strip strong { color: var(--soft); font-weight: 600; }
 .terminal-mark { color: #6f756f; }
 .game-sidebar { display: flex; flex-direction: column; min-height: 0; border: 1px solid rgba(255,255,255,.16); background: rgba(16,18,18,.72); }
+.plays-counter { padding: 17px 20px 15px; border-bottom: 1px solid rgba(255,255,255,.13); }
+.plays-counter-heading { display: flex; align-items: center; gap: 8px; color: var(--muted); font-family: var(--mono); font-size: 8px; letter-spacing: .11em; }
+.plays-counter-dot { width: 6px; height: 6px; flex: 0 0 auto; border-radius: 50%; background: #a7d9b4; box-shadow: 0 0 0 4px rgba(167,217,180,.09); }
+.plays-counter-value { display: block; margin-top: 12px; color: #d7ecd9; font-family: var(--mono); font-size: clamp(34px, 3.2vw, 46px); font-variant-numeric: tabular-nums; font-weight: 500; letter-spacing: -.07em; line-height: 1; }
+.plays-counter-status { display: block; min-height: 12px; margin-top: 7px; color: #858983; font-family: var(--mono); font-size: 8px; letter-spacing: .04em; }
+.plays-counter.is-unavailable .plays-counter-dot { background: #a98263; box-shadow: 0 0 0 4px rgba(169,130,99,.09); }
 .score-readout { padding: 21px 20px 18px; border-bottom: 1px solid rgba(255,255,255,.13); }
 .sidebar-label { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: var(--muted); font-family: var(--mono); font-size: 9px; letter-spacing: .12em; }
 .score-live { width: 6px; height: 6px; border-radius: 50%; background: #59615a; }
@@ -111,6 +117,9 @@
   .overlay-panel { padding: 24px; }
   .overlay-panel:has(.game-run-options) { width: min(100%, 460px); }
   .game-sidebar { display: grid; grid-template-columns: 1fr 1.2fr; }
+  .plays-counter { grid-column: 1 / -1; padding: 13px 16px 11px; }
+  .plays-counter-value { margin-top: 8px; font-size: 38px; }
+  .plays-counter-status { margin-top: 5px; }
   .score-readout { grid-row: span 2; align-self: stretch; border-right: 1px solid rgba(255,255,255,.12); border-bottom: 0; }
   .score-value { font-size: 60px; }
   .run-stats { border-bottom: 1px solid rgba(255,255,255,.12); }

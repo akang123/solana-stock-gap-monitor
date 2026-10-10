@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "stock-gap-maze-counter",
+  "main": "workers/maze-counter/src/index.js",
+  "compatibility_date": "2026-10-10",
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "stock-gap-maze-plays",
+      "database_id": "d3ceffd6-c960-4fd2-9275-4f20e85ad0c1",
+      "migrations_dir": "workers/maze-counter/migrations"
+    }
+  ]
+}
