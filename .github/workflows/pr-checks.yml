@@ -1,0 +1,30 @@
+name: PR checks
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Check JavaScript syntax
+        run: |
+          for file in site/*.js scripts/*.mjs; do
+            node --check "$file"
+          done
+
+      - name: Build static site
+        run: npm run build

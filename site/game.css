@@ -17,6 +17,15 @@
 .game-stage::after { position: absolute; inset: 0; z-index: 0; border: 1px solid rgba(167,217,180,.025); pointer-events: none; content: ""; }
 #game-canvas { display: block; width: 100%; height: 100%; outline: 0; touch-action: none; }
 #game-canvas:focus-visible { outline: 2px solid #a7d9b4; outline-offset: -4px; }
+#arcade-canvas { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; touch-action: none; }
+#arcade-canvas[hidden], #game-canvas[hidden] { display: none; }
+.game-stage[data-view="arcade"] { background: #070a1c; }
+.stage-view-switch { position: absolute; z-index: 6; top: 39px; right: 16px; display: inline-flex; padding: 3px; border: 1px solid rgba(122,157,255,.38); background: rgba(5,9,27,.9); box-shadow: 0 5px 20px rgba(0,0,0,.24); }
+.stage-view-switch button { min-height: 40px; padding: 0 10px; border: 0; background: transparent; color: #b6bfd7; font: 600 9px var(--mono); letter-spacing: .09em; cursor: pointer; transition: color 140ms ease, background-color 140ms ease; }
+.stage-view-switch button[aria-pressed="true"] { background: #243b95; color: #f4f6ff; }
+.stage-view-switch button:hover { color: #fff; }
+.stage-view-switch button:disabled { color: #727c9c; cursor: not-allowed; }
+.stage-view-switch button:focus-visible { position: relative; z-index: 1; outline: 2px solid #d8e4ff; outline-offset: 2px; }
 .stage-coordinate { position: absolute; z-index: 1; top: 15px; left: 17px; right: 17px; display: flex; justify-content: space-between; color: rgba(226,232,222,.58); font-family: var(--mono); font-size: 9px; letter-spacing: .13em; pointer-events: none; }
 .game-loading { position: absolute; z-index: 2; left: 50%; top: 50%; color: var(--soft); font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; transform: translate(-50%,-50%); }
 .game-overlay { position: absolute; z-index: 3; inset: 0; display: grid; place-items: center; padding: 24px; background: rgba(8,10,10,.43); backdrop-filter: blur(2px); }
@@ -149,6 +158,8 @@
   .game-back-link { font-size: 9px; }
   .game-stage { min-height: 390px; }
   .stage-coordinate { left: 11px; right: 11px; top: 12px; font-size: 8px; }
+  .stage-view-switch { top: 34px; right: 10px; }
+  .stage-view-switch button { min-height: 40px; padding-inline: 8px; font-size: 8px; }
   .mobile-controls { right: 10px; bottom: 10px; transform: scale(.92); transform-origin: bottom right; }
   .score-readout { padding: 17px 13px; }
   .score-value { font-size: 52px; }
@@ -158,5 +169,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .game-back-link, .game-footer a, .game-action { transition: none; }
+  .game-back-link, .game-footer a, .game-action, .stage-view-switch button { transition: none; }
 }
