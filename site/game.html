@@ -36,7 +36,12 @@
           <div class="game-play-column">
             <div class="game-stage" id="game-stage">
               <canvas id="game-canvas" tabindex="0" aria-label="Three-dimensional ticker maze. Use WASD or arrow keys to move." aria-describedby="game-controls-copy"></canvas>
+              <canvas id="arcade-canvas" aria-label="Top-down arcade ticker maze preview" aria-hidden="true" hidden></canvas>
               <div class="stage-coordinate" aria-hidden="true"><span id="stage-level">LEVEL 01</span><span id="stage-grid">13 × 9 GRID</span></div>
+              <div class="stage-view-switch" role="group" aria-label="Maze display mode">
+                <button type="button" data-game-view="3d" aria-pressed="true">3D</button>
+                <button type="button" data-game-view="arcade" aria-pressed="false">ARCADE</button>
+              </div>
               <div class="game-loading" id="game-loading" role="status">Loading verified tickers…</div>
               <div class="game-overlay" id="game-overlay" aria-live="polite">
                 <div class="overlay-panel" id="welcome-panel">

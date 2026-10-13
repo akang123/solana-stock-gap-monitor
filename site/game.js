@@ -90,6 +90,8 @@ const PAGE_VISIT_COUNT = 1014;
 const elements = {
   stage: document.querySelector("#game-stage"),
   canvas: document.querySelector("#game-canvas"),
+  arcadeCanvas: document.querySelector("#arcade-canvas"),
+  viewButtons: [...document.querySelectorAll("[data-game-view]")],
   loading: document.querySelector("#game-loading"),
   overlay: document.querySelector("#game-overlay"),
   welcome: document.querySelector("#welcome-panel"),
@@ -134,6 +136,7 @@ const input = {
 const game = {
   THREE: null,
   renderer: null,
+  arcadeContext: elements.arcadeCanvas.getContext("2d"),
   scene: null,
   camera: null,
   player: null,
@@ -141,6 +144,8 @@ const game = {
   pickups: [],
   assets: [],
   exitPosition: null,
+  viewMode: "3d",
+  playerDirection: { x: 1, z: 0 },
   state: "loading",
   levelIndex: 0,
   runMode: "campaign",
@@ -518,7 +523,181 @@ async function loadAssets() {
   populateTickerBoard();
 }
 
+function resizeArcadeCanvas() {
+  const canvas = elements.arcadeCanvas;
+  const width = Math.max(1, elements.stage.clientWidth);
+  const height = Math.max(1, elements.stage.clientHeight);
+  const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+  const pixelWidth = Math.round(width * pixelRatio);
+  const pixelHeight = Math.round(height * pixelRatio);
+  if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+    canvas.width = pixelWidth;
+    canvas.height = pixelHeight;
+  }
+  game.arcadeContext?.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+}
+
+function setViewMode(mode) {
+  if (!new Set(["3d", "arcade"]).has(mode) || (mode === "arcade" && !game.arcadeContext)) return;
+  game.viewMode = mode;
+  elements.stage.dataset.view = mode;
+  elements.canvas.hidden = mode !== "3d";
+  elements.canvas.setAttribute("aria-hidden", String(mode !== "3d"));
+  elements.arcadeCanvas.hidden = mode !== "arcade";
+  elements.arcadeCanvas.setAttribute("aria-hidden", String(mode !== "arcade"));
+  elements.viewButtons.forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.gameView === mode));
+  });
+  if (mode === "arcade") {
+    resizeArcadeCanvas();
+    drawArcadeMaze(performance.now() / 1000);
+  }
+}
+
+function arcadeRoundRect(context, x, y, width, height, radius) {
+  const safeRadius = Math.min(radius, width / 2, height / 2);
+  context.beginPath();
+  context.moveTo(x + safeRadius, y);
+  context.lineTo(x + width - safeRadius, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
+  context.lineTo(x + width, y + height - safeRadius);
+  context.quadraticCurveTo(x + width, y + height, x + width - safeRadius, y + height);
+  context.lineTo(x + safeRadius, y + height);
+  context.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
+  context.lineTo(x, y + safeRadius);
+  context.quadraticCurveTo(x, y, x + safeRadius, y);
+  context.closePath();
+}
+
+function drawArcadeMaze(elapsed = 0) {
+  const context = game.arcadeContext;
+  if (!context || game.viewMode !== "arcade") return;
+  const width = elements.stage.clientWidth;
+  const height = elements.stage.clientHeight;
+  const compact = window.matchMedia("(max-width: 760px)").matches;
+  const topSpace = 64;
+  const bottomSpace = compact ? 122 : 54;
+  const cellSize = Math.max(10, Math.min(
+    compact ? 42 : 50,
+    (width - 36) / GRID_WIDTH,
+    (height - topSpace - bottomSpace) / GRID_HEIGHT,
+  ));
+  const boardWidth = GRID_WIDTH * cellSize;
+  const boardHeight = GRID_HEIGHT * cellSize;
+  const boardX = (width - boardWidth) / 2;
+  const boardY = topSpace + Math.max(0, (height - topSpace - bottomSpace - boardHeight) / 2);
+  context.clearRect(0, 0, width, height);
+  context.fillStyle = "#070a1c";
+  context.fillRect(0, 0, width, height);
+
+  const ambient = context.createRadialGradient(width * 0.5, height * 0.48, 20, width * 0.5, height * 0.48, Math.max(width, height) * 0.72);
+  ambient.addColorStop(0, "rgba(29, 48, 118, .25)");
+  ambient.addColorStop(1, "rgba(7, 10, 28, 0)");
+  context.fillStyle = ambient;
+  context.fillRect(0, 0, width, height);
+
+  context.save();
+  context.globalAlpha = 0.035;
+  context.fillStyle = "#a8c6ff";
+  for (let y = 0; y < height; y += 5) context.fillRect(0, y, width, 1);
+  context.restore();
+
+  const framePadding = Math.max(7, cellSize * 0.16);
+  context.fillStyle = "rgba(4, 8, 25, .8)";
+  context.strokeStyle = "rgba(78, 109, 216, .34)";
+  context.lineWidth = 1;
+  arcadeRoundRect(context, boardX - framePadding, boardY - framePadding, boardWidth + framePadding * 2, boardHeight + framePadding * 2, Math.min(12, cellSize * 0.24));
+  context.fill();
+  context.stroke();
+
+  context.fillStyle = "#060b21";
+  context.fillRect(boardX, boardY, boardWidth, boardHeight);
+  for (let row = 0; row < GRID_HEIGHT; row += 1) {
+    for (let column = 0; column < GRID_WIDTH; column += 1) {
+      const symbol = LEVEL[row][column];
+      const centerX = boardX + (column + 0.5) * cellSize;
+      const centerY = boardY + (row + 0.5) * cellSize;
+      if (symbol === "#") {
+        const inset = Math.max(1.4, cellSize * 0.065);
+        arcadeRoundRect(context, boardX + column * cellSize + inset, boardY + row * cellSize + inset, cellSize - inset * 2, cellSize - inset * 2, cellSize * 0.18);
+        context.fillStyle = "#101b4a";
+        context.strokeStyle = "#4267f2";
+        context.lineWidth = Math.max(1, cellSize * 0.045);
+        context.shadowColor = "rgba(53, 104, 255, .48)";
+        context.shadowBlur = Math.min(14, cellSize * 0.34);
+        context.fill();
+        context.stroke();
+        context.shadowBlur = 0;
+      } else if (symbol === ".") {
+        context.beginPath();
+        context.arc(centerX, centerY, Math.max(1.4, cellSize * 0.052), 0, Math.PI * 2);
+        context.fillStyle = "rgba(190, 213, 255, .64)";
+        context.fill();
+      } else if (/^[1-5]$/.test(symbol)) {
+        const pickupIndex = Number(symbol) - 1;
+        if (game.pickups[pickupIndex]?.collected) continue;
+        const asset = game.assets[pickupIndex];
+        const label = cellSize >= 29 && asset ? asset.ticker.slice(0, 5) : symbol.padStart(2, "0");
+        const fontSize = Math.max(7, Math.min(10, cellSize * 0.23));
+        const pillWidth = Math.min(cellSize * 0.9, Math.max(cellSize * 0.58, label.length * fontSize * 0.66 + 8));
+        const pillHeight = Math.max(12, cellSize * 0.42);
+        context.globalAlpha = 0.82 + Math.sin(elapsed * 3 + pickupIndex) * 0.12;
+        arcadeRoundRect(context, centerX - pillWidth / 2, centerY - pillHeight / 2, pillWidth, pillHeight, pillHeight / 2);
+        context.fillStyle = "#193b38";
+        context.strokeStyle = "#81e1bf";
+        context.lineWidth = Math.max(1, cellSize * 0.035);
+        context.shadowColor = "rgba(87, 240, 185, .56)";
+        context.shadowBlur = Math.min(12, cellSize * 0.3);
+        context.fill();
+        context.stroke();
+        context.shadowBlur = 0;
+        context.globalAlpha = 1;
+        context.fillStyle = "#e0fff3";
+        context.font = `700 ${fontSize}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText(label, centerX, centerY + 0.3, pillWidth - 4);
+      } else if (symbol === "X") {
+        const unlocked = game.collected === PICKUP_COUNT;
+        const pulse = 0.76 + Math.sin(elapsed * 3.2) * 0.12;
+        context.beginPath();
+        context.arc(centerX, centerY, cellSize * 0.31, 0, Math.PI * 2);
+        context.strokeStyle = unlocked ? `rgba(135, 255, 199, ${pulse})` : "rgba(104, 152, 239, .7)";
+        context.lineWidth = Math.max(1.5, cellSize * 0.055);
+        context.shadowColor = unlocked ? "rgba(76, 250, 173, .78)" : "rgba(83, 143, 255, .56)";
+        context.shadowBlur = Math.min(15, cellSize * 0.4);
+        context.stroke();
+        context.shadowBlur = 0;
+        context.fillStyle = unlocked ? "#c8ffe3" : "#c6d9ff";
+        context.font = `700 ${Math.max(6, cellSize * 0.16)}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText("EXIT", centerX, centerY, cellSize * 0.72);
+      }
+    }
+  }
+
+  const start = locateCell("S");
+  const playerX = game.playerPosition ? game.playerPosition.x + GRID_WIDTH / 2 : start.column + 0.5;
+  const playerY = game.playerPosition ? game.playerPosition.z + GRID_HEIGHT / 2 : start.row + 0.5;
+  const playerCenterX = boardX + playerX * cellSize;
+  const playerCenterY = boardY + playerY * cellSize;
+  const playerRadius = cellSize * 0.34;
+  const facing = Math.atan2(game.playerDirection.z, game.playerDirection.x);
+  const mouth = 0.48 + Math.sin(elapsed * 11) * 0.12;
+  context.beginPath();
+  context.moveTo(playerCenterX, playerCenterY);
+  context.arc(playerCenterX, playerCenterY, playerRadius, facing + mouth, facing + Math.PI * 2 - mouth);
+  context.closePath();
+  context.fillStyle = "#ffdc52";
+  context.shadowColor = "rgba(255, 204, 58, .82)";
+  context.shadowBlur = Math.min(17, cellSize * 0.5);
+  context.fill();
+  context.shadowBlur = 0;
+}
+
 function resizeRenderer() {
+  resizeArcadeCanvas();
   if (!game.renderer || !game.camera) return;
   const width = Math.max(1, elements.stage.clientWidth);
   const height = Math.max(1, elements.stage.clientHeight);
@@ -578,6 +757,7 @@ function loadLevel(index) {
 function resetRun() {
   game.score = 0;
   game.collected = 0;
+  game.playerDirection = { x: 1, z: 0 };
   game.remaining = LEVELS[game.levelIndex].seconds;
   game.startedAt = 0;
   game.state = "ready";
@@ -912,6 +1092,7 @@ function movePlayer(deltaSeconds) {
   if (magnitude < 0.01) return;
   direction.x /= magnitude;
   direction.z /= magnitude;
+  game.playerDirection = { x: direction.x, z: direction.z };
   const deltaX = direction.x * MOVE_SPEED * deltaSeconds;
   const deltaZ = direction.z * MOVE_SPEED * deltaSeconds;
   const nextX = game.playerPosition.x + deltaX;
@@ -956,6 +1137,7 @@ function tick(now) {
   }
   if (game.exitObject) game.exitObject.rotation.z = Math.sin(elapsed * 1.2) * 0.1;
   if (game.renderer && game.scene && game.camera) game.renderer.render(game.scene, game.camera);
+  if (game.viewMode === "arcade") drawArcadeMaze(elapsed);
 }
 
 function keyForDirection(direction) {
@@ -1032,6 +1214,16 @@ async function initialize() {
     if (event.persisted) void countGamePageVisit();
   });
   attachControls();
+  if (!game.arcadeContext) {
+    const arcadeButton = elements.viewButtons.find((button) => button.dataset.gameView === "arcade");
+    if (arcadeButton) {
+      arcadeButton.disabled = true;
+      arcadeButton.title = "The arcade view is unavailable in this browser.";
+    }
+  }
+  elements.viewButtons.forEach((button) => {
+    button.addEventListener("click", () => setViewMode(button.dataset.gameView));
+  });
   game.records = readRecords();
   updateLevelOptions();
   renderLeaderboard();
