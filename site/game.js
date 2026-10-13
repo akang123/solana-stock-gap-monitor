@@ -1136,7 +1136,9 @@ function tick(now) {
     pickup.group.children[2].position.y = 1.32 + Math.sin(elapsed * 2 + pickup.phase) * 0.07;
   }
   if (game.exitObject) game.exitObject.rotation.z = Math.sin(elapsed * 1.2) * 0.1;
-  if (game.renderer && game.scene && game.camera) game.renderer.render(game.scene, game.camera);
+  if (game.viewMode === "3d" && game.renderer && game.scene && game.camera) {
+    game.renderer.render(game.scene, game.camera);
+  }
   if (game.viewMode === "arcade") drawArcadeMaze(elapsed);
 }
 
