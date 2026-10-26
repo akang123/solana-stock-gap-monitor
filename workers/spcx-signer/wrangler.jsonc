@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "stock-gap-spcx-signer",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-10",
+  "workers_dev": false,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "stock-gap-maze-plays",
+      "database_id": "d3ceffd6-c960-4fd2-9275-4f20e85ad0c1",
+      "migrations_dir": "../maze-counter/migrations"
+    }
+  ],
+  "vars": {
+    "TREASURY_WALLET": "wLtZwtMkanhiv4nJ9jmnrwL7YKzAZLr7GhNnhytQaEg",
+    "DAILY_PAYOUT_CAP_USD_CENTS": "3000"
+  }
+}

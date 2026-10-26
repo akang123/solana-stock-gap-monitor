@@ -1,3 +1,5 @@
+import { handleMazeApi } from "./maze-api.js";
+
 const COUNTER_NAME = "stock-gap-maze";
 const INITIAL_COUNT = 1013;
 const ALLOWED_ORIGINS = new Set([
@@ -29,13 +31,20 @@ export default {
 
     if (request.method === "OPTIONS") {
       if (origin && !ALLOWED_ORIGINS.has(origin)) return jsonResponse({ error: "Origin not allowed" }, 403, headers);
-      headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+      headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+      headers.set("Access-Control-Allow-Headers", "Content-Type");
       headers.set("Access-Control-Max-Age", "86400");
       return new Response(null, { status: 204, headers });
     }
 
-    if (url.pathname !== "/api/plays") return jsonResponse({ error: "Not found" }, 404, headers);
     if (origin && !ALLOWED_ORIGINS.has(origin)) return jsonResponse({ error: "Origin not allowed" }, 403, headers);
+    const mazeResponse = await handleMazeApi(request, env, url);
+    if (mazeResponse) {
+      for (const [name, value] of mazeResponse.headers) headers.set(name, value);
+      return new Response(mazeResponse.body, { status: mazeResponse.status, headers });
+    }
+
+    if (url.pathname !== "/api/plays") return jsonResponse({ error: "Not found" }, 404, headers);
     if (request.method !== "GET") {
       headers.set("Allow", "GET, OPTIONS");
       return jsonResponse({ error: "Method not allowed" }, 405, headers);

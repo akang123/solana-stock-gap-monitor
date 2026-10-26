@@ -20,11 +20,17 @@ jobs:
         with:
           node-version: 24
 
+      - name: Install dependencies
+        run: npm ci
+
       - name: Check JavaScript syntax
         run: |
-          for file in site/*.js scripts/*.mjs; do
+          for file in site/*.js scripts/*.mjs workers/maze-counter/src/*.js workers/spcx-signer/src/*.js; do
             node --check "$file"
           done
+
+      - name: Test maze leaderboard validation
+        run: npm test
 
       - name: Build static site
         run: npm run build

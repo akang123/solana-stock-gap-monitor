@@ -4,6 +4,16 @@
   "main": "workers/maze-counter/src/index.js",
   "compatibility_date": "2026-10-10",
   "workers_dev": true,
+  "services": [
+    {
+      "binding": "PAYOUT_SIGNER",
+      "service": "stock-gap-spcx-signer"
+    }
+  ],
+  "vars": {
+    "REWARDS_ENABLED": "false",
+    "DAILY_PAYOUT_CAP_USD_CENTS": "3000"
+  },
   "d1_databases": [
     {
       "binding": "DB",
