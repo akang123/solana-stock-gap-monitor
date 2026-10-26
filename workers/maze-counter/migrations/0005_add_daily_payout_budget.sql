@@ -92,31 +92,11 @@ BEGIN
     FROM daily_payout_budgets
     WHERE day_utc = OLD.budget_day
       AND reserved_usd_cents >= OLD.usd_cents
-  ) THEN RAISE(ABORT, 'DAILY_PAYOUT_BUDGET_STATE_INVALID') END;
+  ) THEN RAISE(ABORT, 'DAILY_PAYOUT_BUDDET_STATE_INVALID') END;
 
   UPDATE daily_payout_budgets
   SET reserved_usd_cents = reserved_usd_cents - OLD.usd_cents,
       paid_usd_cents = paid_usd_cents + NEW.usd_cents
-  WHERE day_utc = OLD.budget_day;
-
-  UPDATE daily_payout_reservations
-  SET status = 'paid'
-  WHERE claim_id = NEW.id AND status = 'reserved';
-END;
-
-CREATE TRIGGER reward_claim_budget_release_after_update
-AFTER UPDATE OF status ON reward_claims
-WHEN OLD.status IN ('reserved', 'signed', 'indeterminate') AND NEW.status = 'failed'
-BEGIN
-  SELECT CASE WHEN NOT EXISTS (
-    SELECT 1
-    FROM daily_payout_budgets
-    WHERE day_utc = OLD.budget_day
-      AND reserved_usd_cents >= OLD.usd_cents
-  ) THEN RAISE(ABORT, 'DAILY_PAYOUT_BUDGET_STATE_INVALID') END;
-
-  UPDATE daily_payout_budgets
-  SET reserved_usd_cents = reserved_usd_cents - OLD.usd_cents
   WHERE day_utc = OLD.budget_day;
 
   UPDATE daily_payout_reservations
